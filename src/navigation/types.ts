@@ -23,8 +23,8 @@ export type RootStackParamList = {
   // Cameras
   CameraList: { filter?: 'all' | 'online' | 'offline' | 'mine' | 'shared' } | undefined;
   CameraDetail: { camera?: Camera; cameraId?: string };
-  LiveView: { cameraId: string; cameraName?: string };
-  RecordingPlayback: { cameraId: string; cameraName?: string };
+  LiveView: { cameraId: string; cameraName?: string; isOwner?: boolean };
+  RecordingPlayback: { cameraId: string; cameraName?: string; isOwner?: boolean };
   ShareCamera: { camera?: Camera; cameraId?: string };
 
   // SOS
