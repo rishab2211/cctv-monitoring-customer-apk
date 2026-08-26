@@ -9,6 +9,8 @@ import { linking } from './linking';
 import { useAppSelector } from '../hooks/redux';
 import { SOSFab } from '../components/SOSFab';
 import { useSocket } from '../hooks/useSocket';
+import { useFCMToken } from '../hooks/useFCMToken';
+import { useInactivityTimer } from '../hooks/useInactivityTimer';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -16,8 +18,10 @@ export const RootNavigator: React.FC = () => {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
 
-  // Initialize background real-time socket events when authenticated
+  // Background services on authenticated session
   useSocket();
+  useFCMToken();
+  useInactivityTimer();
 
   const handleSOSPress = () => {
     navigationRef.current?.navigate('SOSTrigger');
