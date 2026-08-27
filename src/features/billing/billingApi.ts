@@ -117,6 +117,35 @@ export const billingApi = baseApi.injectEndpoints({
         url: '/plans',
         method: 'GET',
       }),
+      transformResponse: (response: any) => {
+        let rawPlans: any[] = [];
+        if (Array.isArray(response)) {
+          rawPlans = response;
+        } else if (Array.isArray(response?.data)) {
+          rawPlans = response.data;
+        } else if (Array.isArray(response?.data?.plans)) {
+          rawPlans = response.data.plans;
+        } else if (Array.isArray(response?.plans)) {
+          rawPlans = response.plans;
+        }
+
+        const plans: Plan[] = rawPlans.map((p: any) => ({
+          _id: p._id || p.id || '',
+          name: p.name || 'Security Plan',
+          price: typeof p.price === 'number' ? p.price : Number(p.price) || 0,
+          currency: p.currency || 'INR',
+          billingCycle: p.billingCycle || 'monthly',
+          features: Array.isArray(p.features) ? p.features : [],
+          isPopular: !!p.isPopular,
+        }));
+
+        return {
+          success: true,
+          data: {
+            plans,
+          },
+        };
+      },
       providesTags: ['Billing'],
     }),
 
@@ -182,6 +211,25 @@ export const billingApi = baseApi.injectEndpoints({
         url: '/customer/invoices',
         method: 'GET',
       }),
+      transformResponse: (response: any) => {
+        let invoices: Invoice[] = [];
+        if (Array.isArray(response)) {
+          invoices = response;
+        } else if (Array.isArray(response?.data)) {
+          invoices = response.data;
+        } else if (Array.isArray(response?.data?.invoices)) {
+          invoices = response.data.invoices;
+        } else if (Array.isArray(response?.invoices)) {
+          invoices = response.invoices;
+        }
+
+        return {
+          success: true,
+          data: {
+            invoices,
+          },
+        };
+      },
       providesTags: ['Billing'],
     }),
 
@@ -200,6 +248,25 @@ export const billingApi = baseApi.injectEndpoints({
         url: '/customer/payments',
         method: 'GET',
       }),
+      transformResponse: (response: any) => {
+        let payments: PaymentTransaction[] = [];
+        if (Array.isArray(response)) {
+          payments = response;
+        } else if (Array.isArray(response?.data)) {
+          payments = response.data;
+        } else if (Array.isArray(response?.data?.payments)) {
+          payments = response.data.payments;
+        } else if (Array.isArray(response?.payments)) {
+          payments = response.payments;
+        }
+
+        return {
+          success: true,
+          data: {
+            payments,
+          },
+        };
+      },
       providesTags: ['Billing'],
     }),
   }),

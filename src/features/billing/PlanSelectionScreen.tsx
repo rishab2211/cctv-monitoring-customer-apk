@@ -84,10 +84,16 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
     },
   ];
 
-  const plans =
-    plansResponse?.data?.plans && plansResponse.data.plans.length > 0
-      ? plansResponse.data.plans
-      : fallbackPlans;
+  const plans = React.useMemo(() => {
+    const fetchedPlans = plansResponse?.data?.plans;
+    if (Array.isArray(fetchedPlans) && fetchedPlans.length > 0) {
+      return fetchedPlans;
+    }
+    if (Array.isArray(plansResponse?.data) && plansResponse.data.length > 0) {
+      return plansResponse.data as Plan[];
+    }
+    return fallbackPlans;
+  }, [plansResponse]);
 
   const handleSelectPlan = async (plan: Plan) => {
     if (activeSub?.status === 'active' && activePlanId === plan._id) {
@@ -95,9 +101,21 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
+    const isMongoId = /^[0-9a-fA-F]{24}$/.test(plan._id);
+
+    if (!isMongoId) {
+      // In offline/sandbox fallback mode when using client fallback mock plan IDs
+      navigation.navigate('Payment', {
+        planId: plan._id,
+        amount: plan.price,
+        subscriptionId: `sub_${Date.now()}`,
+      });
+      return;
+    }
+
     try {
       const res = await createSubscriptionMutation({ planId: plan._id }).unwrap();
-      const subscriptionId = res.data.subscription._id;
+      const subscriptionId = res?.data?.subscription?._id || `sub_${Date.now()}`;
 
       navigation.navigate('Payment', {
         planId: plan._id,
@@ -105,7 +123,7 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
         subscriptionId,
       });
     } catch (err: any) {
-      console.error('[PlanSelection] Error creating subscription:', err);
+      console.warn('[PlanSelection] Error creating subscription on backend:', err);
       // Fallback navigation with client-generated id for seamless sandbox testing
       navigation.navigate('Payment', {
         planId: plan._id,

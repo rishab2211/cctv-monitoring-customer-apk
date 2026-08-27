@@ -54,11 +54,12 @@ export const PaymentScreen: React.FC<Props> = ({ navigation, route }) => {
       let orderId = `order_${Date.now()}`;
       let keyId = 'rzp_test_placeholder';
 
-      if (subscriptionId) {
+      const isMongoId = /^[0-9a-fA-F]{24}$/.test(subscriptionId || '');
+      if (subscriptionId && isMongoId) {
         try {
           const orderRes = await createOrderMutation({ subscriptionId }).unwrap();
-          orderId = orderRes.data.orderId || orderId;
-          keyId = orderRes.data.razorpayKeyId || keyId;
+          orderId = orderRes.data?.orderId || orderId;
+          keyId = orderRes.data?.razorpayKeyId || keyId;
         } catch (orderErr) {
           console.warn('[Razorpay] Order creation endpoint fallback:', orderErr);
         }
