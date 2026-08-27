@@ -23,6 +23,12 @@ import { PaymentHistoryScreen } from '../features/billing/PaymentHistoryScreen';
 import { TicketListScreen } from '../features/tickets/TicketListScreen';
 import { TicketDetailScreen } from '../features/tickets/TicketDetailScreen';
 import { CreateTicketScreen } from '../features/tickets/CreateTicketScreen';
+import { NotificationsScreen } from '../features/notifications/NotificationsScreen';
+import { NotificationPreferencesScreen } from '../features/notifications/NotificationPreferencesScreen';
+import { EditProfileScreen } from '../features/profile/EditProfileScreen';
+import { ChangePasswordScreen } from '../features/profile/ChangePasswordScreen';
+import { SessionsScreen } from '../features/profile/SessionsScreen';
+import { AboutScreen } from '../features/profile/AboutScreen';
 import { linking } from './linking';
 import { useAppSelector } from '../hooks/redux';
 import { SOSFab } from '../components/SOSFab';
@@ -39,7 +45,7 @@ export const RootNavigator: React.FC = () => {
 
   // Background services on authenticated session
   useSocket();
-  useFCMToken();
+  useFCMToken(navigationRef);
   useInactivityTimer();
 
   const handleSOSPress = () => {
@@ -170,6 +176,40 @@ export const RootNavigator: React.FC = () => {
               name="TicketDetail"
               component={TicketDetailScreen}
               options={{ title: 'Ticket Conversation' }}
+            />
+
+            {/* Notifications Module Screens */}
+            <Stack.Screen
+              name="Notifications"
+              component={NotificationsScreen}
+              options={{ title: 'Notification Centre' }}
+            />
+            <Stack.Screen
+              name="NotifPreferences"
+              component={NotificationPreferencesScreen}
+              options={{ title: 'Notification Preferences' }}
+            />
+
+            {/* Profile & Settings Screens */}
+            <Stack.Screen
+              name="EditProfile"
+              component={EditProfileScreen}
+              options={{ title: 'Edit Profile' }}
+            />
+            <Stack.Screen
+              name="ChangePassword"
+              component={ChangePasswordScreen}
+              options={{ title: 'Change Password' }}
+            />
+            <Stack.Screen
+              name="Sessions"
+              component={SessionsScreen}
+              options={{ title: 'Active Sessions' }}
+            />
+            <Stack.Screen
+              name="About"
+              component={AboutScreen}
+              options={{ title: 'About & Legal' }}
             />
 
             {/* Full-Screen Modals */}

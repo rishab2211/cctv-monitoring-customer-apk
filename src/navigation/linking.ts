@@ -34,6 +34,11 @@ export const linking: LinkingOptions<RootStackParamList> = {
       TicketDetail: 'tickets/:ticketId',
       CreateTicket: 'tickets/create',
       Notifications: 'notifications',
+      NotifPreferences: 'settings/preferences',
+      EditProfile: 'profile/edit',
+      ChangePassword: 'profile/change-password',
+      Sessions: 'profile/sessions',
+      About: 'about',
     },
   },
 };

@@ -21,11 +21,13 @@ import {
   Building03Icon,
   Call02Icon,
   Shield01Icon,
+  Notification01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { StatusBadge } from '../../components/StatusBadge';
 import { useGetDashboardQuery } from './dashboardApi';
 import { useGetIncidentsQuery } from '../incidents/incidentsApi';
+import { useGetNotificationsQuery } from '../notifications/notificationsApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useAppSelector } from '../../hooks/redux';
@@ -40,6 +42,11 @@ export const DashboardScreen: React.FC = () => {
 
   const { data: incidentsResponse } = useGetIncidentsQuery();
   const incidents = incidentsResponse?.data?.incidents || [];
+
+  const { data: notifsResponse } = useGetNotificationsQuery();
+  const unreadNotifCount =
+    notifsResponse?.data?.unreadCount ??
+    (notifsResponse?.data?.notifications?.filter((n) => !n.isRead).length || 0);
 
   const subscriptionStatus = dashboard?.subscription?.status || 'active';
   const { canStream, paywallType } = useSubscriptionGuard({
@@ -82,14 +89,31 @@ export const DashboardScreen: React.FC = () => {
             <Text style={styles.greeting}>Welcome back,</Text>
             <Text style={styles.userName}>{dashboard?.customer?.name || user?.name || 'Customer'}</Text>
           </View>
-          <TouchableOpacity
-            style={styles.avatarButton}
-            onPress={() => navigation.navigate('MainTabs', { screen: 'TabProfile' })}
-          >
-            <Text style={styles.avatarLetter}>
-              {(dashboard?.customer?.name || user?.name || 'C')[0].toUpperCase()}
-            </Text>
-          </TouchableOpacity>
+
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              style={styles.notifButton}
+              onPress={() => navigation.navigate('Notifications')}
+            >
+              <HugeIcon icon={Notification01Icon} size={22} color={COLORS.textPrimary} />
+              {unreadNotifCount > 0 ? (
+                <View style={styles.notifBadge}>
+                  <Text style={styles.notifBadgeText}>
+                    {unreadNotifCount > 9 ? '9+' : unreadNotifCount}
+                  </Text>
+                </View>
+              ) : null}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.avatarButton}
+              onPress={() => navigation.navigate('MainTabs', { screen: 'TabProfile' })}
+            >
+              <Text style={styles.avatarLetter}>
+                {(dashboard?.customer?.name || user?.name || 'C')[0].toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Active SOS Emergency Banner (Conditional) */}
@@ -384,6 +408,41 @@ const styles = StyleSheet.create({
   userName: {
     ...TYPOGRAPHY.h2,
     color: COLORS.textPrimary,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  notifButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  notifBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: COLORS.error,
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: COLORS.surface,
+  },
+  notifBadgeText: {
+    color: COLORS.textInverse,
+    fontSize: 10,
+    fontWeight: '800',
   },
   avatarButton: {
     width: 44,

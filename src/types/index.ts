@@ -157,8 +157,35 @@ export interface AppNotification {
   createdAt: string;
 }
 
+export interface NotificationPreferences {
+  alerts: {
+    push: boolean;
+    inApp: boolean;
+    email: boolean;
+  };
+  system: {
+    push: boolean;
+    inApp: boolean;
+    email: boolean;
+  };
+}
+
+export interface Session {
+  _id: string;
+  sessionId: string;
+  deviceName?: string;
+  deviceType?: 'mobile' | 'desktop' | 'tablet' | 'unknown';
+  os?: string;
+  browser?: string;
+  ipAddress?: string;
+  isActive: boolean;
+  lastActiveAt: string;
+  createdAt: string;
+}
+
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   data: T;
 }
+

@@ -24,15 +24,20 @@ export const COLORS = {
   sosRed: '#FF3B30',
   sosRedDark: '#D32F2F',
   sosRedMuted: 'rgba(255, 59, 48, 0.15)',
+  error: '#FF3B30',
   
   warningAmber: '#FF9F0A',
   warningAmberMuted: 'rgba(255, 159, 10, 0.15)',
+  warning: '#FF9F0A',
   
   successGreen: '#30D158',
   successGreenMuted: 'rgba(48, 209, 88, 0.15)',
+  success: '#30D158',
   
   infoBlue: '#0A84FF',
   infoBlueMuted: 'rgba(10, 132, 255, 0.15)',
+  info: '#0A84FF',
+  secondary: '#0A84FF',
 
   // Typography
   textPrimary: '#FFFFFF',
@@ -87,6 +92,18 @@ export const TYPOGRAPHY = {
     lineHeight: 24,
     color: COLORS.textPrimary,
   },
+  subtitle1: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    lineHeight: 22,
+    color: COLORS.textPrimary,
+  },
+  subtitle2: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    lineHeight: 20,
+    color: COLORS.textPrimary,
+  },
   bodyLarge: {
     fontSize: 16,
     fontWeight: '400' as const,
@@ -120,6 +137,20 @@ export const TYPOGRAPHY = {
 };
 
 export const SHADOWS = {
+  sm: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6.27,
+    elevation: 4,
+  },
   small: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
