@@ -84,11 +84,13 @@ export interface SOSAlert {
   _id: string;
   triggeredBy: string | User;
   cameraId?: string | Camera;
-  location?: {
-    latitude: number;
-    longitude: number;
-    address?: string;
-  };
+  location?:
+    | string
+    | {
+        latitude?: number;
+        longitude?: number;
+        address?: string;
+      };
   status: 'active' | 'acknowledged' | 'resolved' | 'false_alarm';
   acknowledgedBy?: string | User;
   acknowledgedAt?: string;

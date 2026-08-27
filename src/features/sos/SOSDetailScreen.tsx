@@ -189,9 +189,11 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <HugeIcon icon={Location01Icon} size={20} color={COLORS.sosRed} />
             <View style={{ flex: 1, marginLeft: SPACING.sm }}>
               <Text style={styles.locationAddress}>
-                {alert.location?.address || 'Premises Coordinates'}
+                {typeof alert.location === 'string'
+                  ? alert.location
+                  : alert.location?.address || 'Premises Coordinates'}
               </Text>
-              {alert.location?.latitude && alert.location?.longitude ? (
+              {typeof alert.location === 'object' && alert.location?.latitude && alert.location?.longitude ? (
                 <Text style={styles.locationCoords}>
                   GPS: {alert.location.latitude.toFixed(5)}, {alert.location.longitude.toFixed(5)}
                 </Text>

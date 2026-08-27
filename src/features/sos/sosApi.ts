@@ -3,11 +3,13 @@ import { SOSAlert } from '../../types';
 
 export interface TriggerSOSRequest {
   cameraId?: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-    address?: string;
-  };
+  location?:
+    | string
+    | {
+        latitude?: number;
+        longitude?: number;
+        address?: string;
+      };
 }
 
 export interface SOSHistoryResponse {
@@ -51,11 +53,32 @@ export const sosApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // 1. Trigger SOS emergency
     triggerSOS: builder.mutation<SOSDetailResponse, TriggerSOSRequest>({
-      query: (body) => ({
-        url: '/sos',
-        method: 'POST',
-        data: body,
-      }),
+      query: (body) => {
+        let locationString: string | undefined;
+        if (typeof body.location === 'string') {
+          locationString = body.location;
+        } else if (body.location) {
+          if (body.location.address) {
+            locationString = body.location.address;
+          } else if (body.location.latitude && body.location.longitude) {
+            locationString = `GPS (${body.location.latitude.toFixed(5)}, ${body.location.longitude.toFixed(5)})`;
+          }
+        }
+
+        const payload: Record<string, any> = {};
+        if (body.cameraId && /^[0-9a-fA-F]{24}$/.test(body.cameraId)) {
+          payload.cameraId = body.cameraId;
+        }
+        if (locationString) {
+          payload.location = locationString;
+        }
+
+        return {
+          url: '/sos',
+          method: 'POST',
+          data: payload,
+        };
+      },
       invalidatesTags: ['SOS', 'Dashboard'],
     }),
 

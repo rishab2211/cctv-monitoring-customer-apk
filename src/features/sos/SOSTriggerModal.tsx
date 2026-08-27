@@ -106,15 +106,16 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
 
     try {
       setTriggerError(null);
+      const locationString =
+        locationInfo?.address ||
+        (locationInfo ? `GPS (${locationInfo.latitude.toFixed(5)}, ${locationInfo.longitude.toFixed(5)})` : undefined);
+
       const res = await triggerSOSMutation({
-        cameraId: selectedCameraId,
-        location: locationInfo
-          ? {
-              latitude: locationInfo.latitude,
-              longitude: locationInfo.longitude,
-              address: locationInfo.address,
-            }
-          : undefined,
+        cameraId:
+          selectedCameraId && /^[0-9a-fA-F]{24}$/.test(selectedCameraId)
+            ? selectedCameraId
+            : undefined,
+        location: locationString,
       }).unwrap();
 
       const createdAlert = res.data;

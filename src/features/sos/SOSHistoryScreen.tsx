@@ -118,11 +118,13 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         {/* Location Row */}
-        {alert.location?.address ? (
+        {alert.location ? (
           <View style={styles.infoRow}>
             <HugeIcon icon={Location01Icon} size={14} color={COLORS.textMuted} />
             <Text style={styles.infoText} numberOfLines={1}>
-              {alert.location.address}
+              {typeof alert.location === 'string'
+                ? alert.location
+                : alert.location.address || 'Premises Location'}
             </Text>
           </View>
         ) : null}
