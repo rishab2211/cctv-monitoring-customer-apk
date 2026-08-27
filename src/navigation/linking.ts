@@ -22,6 +22,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       PlanSelection: 'billing/plans',
       InvoiceDetail: 'billing/invoices/:invoiceId',
       SOSDetail: 'sos/:sosId',
+      SOSHistory: 'sos/history',
       SOSTrigger: 'sos/trigger',
       IncidentDetail: 'incidents/:incidentId',
       TicketDetail: 'tickets/:ticketId',

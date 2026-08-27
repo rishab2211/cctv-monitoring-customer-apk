@@ -1,13 +1,17 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
-import { Logout01Icon } from '@hugeicons/core-free-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Logout01Icon, SirenIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
+import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { logout } from '../../app/slices/authSlice';
 import { clearTokens } from '../../utils/keychain';
 
 export const ProfileScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
@@ -31,6 +35,24 @@ export const ProfileScreen: React.FC = () => {
         <View style={styles.roleBadge}>
           <Text style={styles.roleText}>CUSTOMER</Text>
         </View>
+      </View>
+
+      {/* Profile Navigation Menu Options */}
+      <View style={styles.menuSection}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('SOSHistory')}
+        >
+          <View style={styles.menuIconCircle}>
+            <HugeIcon icon={SirenIcon} size={18} color={COLORS.sosRed} />
+          </View>
+          <View style={styles.menuTextContainer}>
+            <Text style={styles.menuTitle}>Emergency SOS History</Text>
+            <Text style={styles.menuSubtitle}>View past emergency logs & dispatches</Text>
+          </View>
+          <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -106,6 +128,41 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     color: COLORS.primary,
     fontWeight: '700',
+  },
+  menuSection: {
+    backgroundColor: COLORS.surfaceCard,
+    borderRadius: RADIUS.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: SPACING.xl,
+    overflow: 'hidden',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: SPACING.md,
+  },
+  menuIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: COLORS.surfaceElevated,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuTextContainer: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
+  menuTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+  },
+  menuSubtitle: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.textMuted,
+    marginTop: 2,
   },
   logoutButton: {
     backgroundColor: COLORS.sosRedMuted,

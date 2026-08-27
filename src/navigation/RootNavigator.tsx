@@ -10,6 +10,8 @@ import { LiveViewScreen } from '../features/cameras/LiveViewScreen';
 import { RecordingPlaybackScreen } from '../features/cameras/RecordingPlaybackScreen';
 import { ShareCameraScreen } from '../features/cameras/ShareCameraScreen';
 import { SOSTriggerModal } from '../features/sos/SOSTriggerModal';
+import { SOSHistoryScreen } from '../features/sos/SOSHistoryScreen';
+import { SOSDetailScreen } from '../features/sos/SOSDetailScreen';
 import { linking } from './linking';
 import { useAppSelector } from '../hooks/redux';
 import { SOSFab } from '../components/SOSFab';
@@ -84,6 +86,18 @@ export const RootNavigator: React.FC = () => {
               name="ShareCamera"
               component={ShareCameraScreen}
               options={{ title: 'Share Camera' }}
+            />
+
+            {/* SOS Module Screens */}
+            <Stack.Screen
+              name="SOSHistory"
+              component={SOSHistoryScreen}
+              options={{ title: 'Emergency History' }}
+            />
+            <Stack.Screen
+              name="SOSDetail"
+              component={SOSDetailScreen}
+              options={{ title: 'SOS Incident Details' }}
             />
 
             {/* Full-Screen Modals */}

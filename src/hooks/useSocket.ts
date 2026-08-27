@@ -63,7 +63,11 @@ export const useSocket = () => {
     // 2. SOS Acknowledged event
     socket.on('sos_acknowledged', (data) => {
       console.log('[Socket.IO] SOS Acknowledged:', data);
-      if (data && (data.triggeredBy === user?._id || data.userId === user?._id)) {
+      const triggeredId =
+        typeof data?.triggeredBy === 'object' ? data?.triggeredBy?._id : data?.triggeredBy;
+      const targetUserId = data?.userId || data?.customerId || triggeredId;
+
+      if (!targetUserId || targetUserId === user?._id) {
         dispatch(baseApi.util.invalidateTags(['SOS', 'Dashboard']));
       }
     });
@@ -71,8 +75,12 @@ export const useSocket = () => {
     // 3. SOS Resolved event
     socket.on('sos_resolved', (data) => {
       console.log('[Socket.IO] SOS Resolved:', data);
-      if (data && (data.triggeredBy === user?._id || data.userId === user?._id)) {
-        if (data._id) {
+      const triggeredId =
+        typeof data?.triggeredBy === 'object' ? data?.triggeredBy?._id : data?.triggeredBy;
+      const targetUserId = data?.userId || data?.customerId || triggeredId;
+
+      if (!targetUserId || targetUserId === user?._id) {
+        if (data?._id) {
           dispatch(removeActiveSosAlert(data._id));
         }
         dispatch(baseApi.util.invalidateTags(['SOS', 'Dashboard']));
@@ -82,13 +90,25 @@ export const useSocket = () => {
     // 4. Incident Updated event
     socket.on('incident_updated', (data) => {
       console.log('[Socket.IO] Incident updated:', data);
-      dispatch(baseApi.util.invalidateTags(['Incidents', 'Dashboard']));
+      const reportedId =
+        typeof data?.reportedBy === 'object' ? data?.reportedBy?._id : data?.reportedBy;
+      const targetUserId = data?.userId || data?.customerId || reportedId;
+
+      if (!targetUserId || targetUserId === user?._id) {
+        dispatch(baseApi.util.invalidateTags(['Incidents', 'Dashboard']));
+      }
     });
 
     // 5. Incident Closed event
     socket.on('incident_closed', (data) => {
       console.log('[Socket.IO] Incident closed:', data);
-      dispatch(baseApi.util.invalidateTags(['Incidents', 'Dashboard']));
+      const reportedId =
+        typeof data?.reportedBy === 'object' ? data?.reportedBy?._id : data?.reportedBy;
+      const targetUserId = data?.userId || data?.customerId || reportedId;
+
+      if (!targetUserId || targetUserId === user?._id) {
+        dispatch(baseApi.util.invalidateTags(['Incidents', 'Dashboard']));
+      }
     });
 
     return () => {
