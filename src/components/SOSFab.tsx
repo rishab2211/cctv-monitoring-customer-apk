@@ -8,6 +8,8 @@ import Animated, {
   withSequence,
   Easing,
 } from 'react-native-reanimated';
+import { SirenIcon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from './HugeIcon';
 import { COLORS, SHADOWS, SPACING } from '../constants/theme';
 
 interface SOSFabProps {
@@ -45,7 +47,7 @@ export const SOSFab: React.FC<SOSFabProps> = ({ onPress, visible = true }) => {
         accessibilityLabel="Emergency SOS Button"
         accessibilityRole="button"
       >
-        <Text style={styles.sosIcon}>🚨</Text>
+        <HugeIcon icon={SirenIcon} size={18} color="#FFFFFF" strokeWidth={2} />
         <Text style={styles.sosText}>SOS</Text>
       </TouchableOpacity>
     </View>
@@ -79,15 +81,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...SHADOWS.glowSos,
   },
-  sosIcon: {
-    fontSize: 14,
-    lineHeight: 16,
-  },
   sosText: {
     color: '#FFFFFF',
     fontWeight: '900',
-    fontSize: 12,
+    fontSize: 11,
     letterSpacing: 1,
-    marginTop: -2,
+    marginTop: 1,
   },
 });

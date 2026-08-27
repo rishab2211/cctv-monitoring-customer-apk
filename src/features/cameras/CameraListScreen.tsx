@@ -14,6 +14,17 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  CctvCameraIcon,
+  PlayIcon,
+  Clock01Icon,
+  UserGroupIcon,
+  InformationCircleIcon,
+  Location01Icon,
+  Search01Icon,
+  Cancel01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { StatusBadge } from '../../components/StatusBadge';
 import { useGetCamerasQuery } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
@@ -99,9 +110,12 @@ export const CameraListScreen: React.FC = () => {
                 </View>
               ) : null}
             </View>
-            <Text style={styles.cameraLocation} numberOfLines={1}>
-              📍 {camera.location?.address || 'Premises Camera'}
-            </Text>
+            <View style={styles.locationRow}>
+              <HugeIcon icon={Location01Icon} size={12} color={COLORS.textMuted} />
+              <Text style={styles.cameraLocation} numberOfLines={1}>
+                {camera.location?.address || 'Premises Camera'}
+              </Text>
+            </View>
           </View>
           <StatusBadge status={camera.status} />
         </View>
@@ -112,9 +126,9 @@ export const CameraListScreen: React.FC = () => {
           style={styles.previewBox}
           onPress={() => handleWatchLive(camera)}
         >
-          <Text style={styles.previewIcon}>📹</Text>
+          <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} />
           <View style={styles.playOverlayButton}>
-            <Text style={styles.playIconText}>▶</Text>
+            <HugeIcon icon={PlayIcon} size={18} color={COLORS.textInverse} style={{ marginLeft: 2 }} />
           </View>
           <View style={styles.serialBox}>
             <Text style={styles.serialText}>SN: {camera.serialNumber || camera._id.slice(-6)}</Text>
@@ -127,14 +141,16 @@ export const CameraListScreen: React.FC = () => {
             style={[styles.actionBtn, styles.liveBtn]}
             onPress={() => handleWatchLive(camera)}
           >
-            <Text style={styles.liveBtnText}>▶ Live Feed</Text>
+            <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
+            <Text style={styles.liveBtnText}>Live Feed</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.actionBtn, styles.secondaryBtn]}
             onPress={() => handleWatchPlayback(camera)}
           >
-            <Text style={styles.secondaryBtnText}>⏱ Recordings</Text>
+            <HugeIcon icon={Clock01Icon} size={14} color={COLORS.textSecondary} />
+            <Text style={styles.secondaryBtnText}>Recordings</Text>
           </TouchableOpacity>
 
           {isOwner ? (
@@ -142,7 +158,7 @@ export const CameraListScreen: React.FC = () => {
               style={[styles.actionBtn, styles.iconBtn]}
               onPress={() => navigation.navigate('ShareCamera', { camera, cameraId: camera._id })}
             >
-              <Text style={styles.iconBtnText}>👥</Text>
+              <HugeIcon icon={UserGroupIcon} size={16} color={COLORS.textSecondary} />
             </TouchableOpacity>
           ) : null}
 
@@ -150,7 +166,7 @@ export const CameraListScreen: React.FC = () => {
             style={[styles.actionBtn, styles.iconBtn]}
             onPress={() => navigation.navigate('CameraDetail', { camera, cameraId: camera._id })}
           >
-            <Text style={styles.iconBtnText}>ℹ️</Text>
+            <HugeIcon icon={InformationCircleIcon} size={16} color={COLORS.textSecondary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -168,7 +184,7 @@ export const CameraListScreen: React.FC = () => {
 
         {/* Search Bar */}
         <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <HugeIcon icon={Search01Icon} size={16} color={COLORS.textMuted} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search by name, location, serial number..."
@@ -178,7 +194,7 @@ export const CameraListScreen: React.FC = () => {
           />
           {searchQuery ? (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Text style={styles.clearIcon}>✕</Text>
+              <HugeIcon icon={Cancel01Icon} size={14} color={COLORS.textMuted} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -227,7 +243,7 @@ export const CameraListScreen: React.FC = () => {
           }
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Text style={styles.emptyStateIcon}>📹</Text>
+              <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} style={{ marginBottom: SPACING.md }} />
               <Text style={styles.emptyStateTitle}>No Cameras Found</Text>
               <Text style={styles.emptyStateDesc}>
                 {searchQuery || activeFilter !== 'all'
@@ -365,10 +381,15 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '800',
   },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 3,
+  },
   cameraLocation: {
     ...TYPOGRAPHY.bodySmall,
     color: COLORS.textMuted,
-    marginTop: 2,
+    marginLeft: 4,
   },
   previewBox: {
     height: 150,
@@ -381,10 +402,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     position: 'relative',
   },
-  previewIcon: {
-    fontSize: 40,
-    opacity: 0.4,
-  },
   playOverlayButton: {
     position: 'absolute',
     width: 48,
@@ -394,11 +411,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...SHADOWS.glowTeal,
-  },
-  playIconText: {
-    color: COLORS.textInverse,
-    fontSize: 16,
-    marginLeft: 3,
   },
   serialBox: {
     position: 'absolute',
@@ -421,6 +433,7 @@ const styles = StyleSheet.create({
   actionBtn: {
     borderRadius: RADIUS.button,
     paddingVertical: SPACING.sm,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -433,6 +446,7 @@ const styles = StyleSheet.create({
     color: COLORS.textInverse,
     fontSize: 13,
     fontWeight: '700',
+    marginLeft: 4,
   },
   secondaryBtn: {
     flex: 1.1,
@@ -443,14 +457,14 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontSize: 13,
     fontWeight: '600',
+    marginLeft: 4,
   },
   iconBtn: {
     width: 38,
     backgroundColor: COLORS.surfaceElevated,
     marginRight: SPACING.xs,
-  },
-  iconBtnText: {
-    fontSize: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   centerLoading: {
     flex: 1,

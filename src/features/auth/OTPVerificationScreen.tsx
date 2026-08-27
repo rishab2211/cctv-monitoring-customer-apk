@@ -14,6 +14,13 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  Mail01Icon,
+  AlertCircleIcon,
+  CheckmarkCircle01Icon,
+  ArrowLeft01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { useVerifyOtpMutation, useForgotPasswordMutation } from './authApi';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'OTPVerification'>;
@@ -28,7 +35,7 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
   const [verifyOtpMutation, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [resendOtpMutation, { isLoading: isResending }] = useForgotPasswordMutation();
 
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<any>(null);
 
   // Auto-focus the OTP input
   useEffect(() => {
@@ -116,7 +123,7 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View style={styles.iconCircle}>
-            <Text style={styles.icon}>✉️</Text>
+            <HugeIcon icon={Mail01Icon} size={28} color={COLORS.primary} strokeWidth={1.8} />
           </View>
           <Text style={styles.title}>Verification Code</Text>
           <Text style={styles.subtitle}>
@@ -127,13 +134,15 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
 
         {errorMessage ? (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+            <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.sosRed} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
           </View>
         ) : null}
 
         {resendSuccess ? (
           <View style={styles.successBanner}>
-            <Text style={styles.successBannerText}>✅ {resendSuccess}</Text>
+            <HugeIcon icon={CheckmarkCircle01Icon} size={16} color={COLORS.successGreen} />
+            <Text style={styles.successBannerText}>{resendSuccess}</Text>
           </View>
         ) : null}
 
@@ -216,7 +225,8 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
           onPress={() => navigation.goBack()}
           disabled={isVerifying}
         >
-          <Text style={styles.backLinkText}>← Change Email Address</Text>
+          <HugeIcon icon={ArrowLeft01Icon} size={16} color={COLORS.textSecondary} />
+          <Text style={styles.backLinkText}>Change Email Address</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -277,11 +287,15 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   errorBannerText: {
     color: COLORS.sosRed,
     fontSize: 13,
     fontWeight: '600',
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   successBanner: {
     backgroundColor: COLORS.successGreenMuted,
@@ -290,11 +304,15 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   successBannerText: {
     color: COLORS.successGreen,
     fontSize: 13,
     fontWeight: '600',
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   form: {
     backgroundColor: COLORS.surfaceCard,

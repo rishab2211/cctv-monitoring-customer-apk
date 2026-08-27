@@ -16,6 +16,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  ViewIcon,
+  ViewOffSlashIcon,
+  AlertCircleIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { signUpSchema, SignUpFormValues } from './schemas';
 import { useRegisterMutation } from './authApi';
 import { useAppDispatch } from '../../hooks/redux';
@@ -104,7 +110,8 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
         {errorMessage ? (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+            <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.sosRed} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -211,7 +218,11 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '🙈'}</Text>
+                <HugeIcon
+                  icon={showPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                  color={COLORS.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.password ? (
@@ -247,9 +258,11 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.eyeButton}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text style={styles.eyeIcon}>
-                  {showConfirmPassword ? '👁️' : '🙈'}
-                </Text>
+                <HugeIcon
+                  icon={showConfirmPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                  color={COLORS.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.confirmPassword ? (
@@ -263,7 +276,7 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.primaryButton, isLoading && styles.buttonDisabled]}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => handleSubmit(onSubmit)()}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -315,12 +328,16 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   errorBannerText: {
     color: COLORS.sosRed,
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 18,
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   form: {
     backgroundColor: COLORS.surfaceCard,

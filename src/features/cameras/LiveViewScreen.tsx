@@ -21,6 +21,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
 import {
+  WifiDisconnected01Icon,
+  Cancel01Icon,
+  VolumeHighIcon,
+  VolumeOffIcon,
+  Camera01Icon,
+  Clock01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
+import {
   useGetCameraLiveInfoQuery,
   usePostWebRTCOfferMutation,
   useStopStreamMutation,
@@ -203,7 +212,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
                 </View>
               ) : (
                 <View style={styles.errorBox}>
-                  <Text style={styles.errorIcon}>📡</Text>
+                  <HugeIcon icon={WifiDisconnected01Icon} size={48} color={COLORS.warningAmber} style={{ marginBottom: SPACING.md }} />
                   <Text style={styles.errorTitle}>Stream Standby / Offline</Text>
                   <Text style={styles.errorDesc}>
                     Unable to connect live frames. The camera unit may be offline or MediaMTX is restarting.
@@ -220,7 +229,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
           {controlsVisible ? (
             <View style={styles.topBar}>
               <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
-                <Text style={styles.closeButtonText}>✕</Text>
+                <HugeIcon icon={Cancel01Icon} size={18} color="#FFFFFF" />
               </TouchableOpacity>
 
               <View style={styles.cameraTitleContainer}>
@@ -255,12 +264,17 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
                 style={[styles.controlBtn, isMuted && styles.controlBtnActive]}
                 onPress={() => setIsMuted(!isMuted)}
               >
-                <Text style={styles.controlIcon}>{isMuted ? '🔇' : '🔊'}</Text>
+                <HugeIcon
+                  icon={isMuted ? VolumeOffIcon : VolumeHighIcon}
+                  size={22}
+                  color="#FFFFFF"
+                  style={{ marginBottom: 4 }}
+                />
                 <Text style={styles.controlLabel}>{isMuted ? 'Muted' : 'Audio'}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.controlBtn} onPress={handleSnapshot}>
-                <Text style={styles.controlIcon}>📸</Text>
+                <HugeIcon icon={Camera01Icon} size={22} color="#FFFFFF" style={{ marginBottom: 4 }} />
                 <Text style={styles.controlLabel}>Snapshot</Text>
               </TouchableOpacity>
 
@@ -270,7 +284,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
                   navigation.navigate('RecordingPlayback', { cameraId, cameraName })
                 }
               >
-                <Text style={styles.controlIcon}>⏱</Text>
+                <HugeIcon icon={Clock01Icon} size={22} color="#FFFFFF" style={{ marginBottom: 4 }} />
                 <Text style={styles.controlLabel}>Playback</Text>
               </TouchableOpacity>
             </View>

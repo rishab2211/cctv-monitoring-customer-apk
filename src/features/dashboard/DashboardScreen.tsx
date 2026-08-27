@@ -13,6 +13,15 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  SirenIcon,
+  ArrowRight01Icon,
+  CctvCameraIcon,
+  PlayIcon,
+  Building03Icon,
+  Call02Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { StatusBadge } from '../../components/StatusBadge';
 import { useGetDashboardQuery } from './dashboardApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
@@ -78,7 +87,7 @@ export const DashboardScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* 🚨 Active SOS Emergency Banner (Conditional) */}
+        {/* Active SOS Emergency Banner (Conditional) */}
         {dashboard?.activeSosAlerts && dashboard.activeSosAlerts.length > 0 ? (
           <TouchableOpacity
             activeOpacity={0.9}
@@ -91,7 +100,7 @@ export const DashboardScreen: React.FC = () => {
             }
           >
             <View style={styles.sosIconBox}>
-              <Text style={styles.sosIconText}>🚨</Text>
+              <HugeIcon icon={SirenIcon} size={20} color="#FFFFFF" strokeWidth={2} />
             </View>
             <View style={styles.sosAlertContent}>
               <Text style={styles.sosAlertTitle}>ACTIVE SOS ALERT</Text>
@@ -99,7 +108,7 @@ export const DashboardScreen: React.FC = () => {
                 Emergency response team has been alerted. Tap to view live dispatch timeline.
               </Text>
             </View>
-            <Text style={styles.chevron}>➔</Text>
+            <HugeIcon icon={ArrowRight01Icon} size={20} color={COLORS.sosRed} />
           </TouchableOpacity>
         ) : null}
 
@@ -216,7 +225,7 @@ export const DashboardScreen: React.FC = () => {
 
                 {/* Video Thumbnail Placeholder */}
                 <View style={styles.cameraPreviewBox}>
-                  <Text style={styles.cameraPreviewIcon}>📹</Text>
+                  <HugeIcon icon={CctvCameraIcon} size={36} color={COLORS.textMuted} />
                   {camera.isOwner === false ? (
                     <View style={styles.sharedBadge}>
                       <Text style={styles.sharedBadgeText}>SHARED</Text>
@@ -232,7 +241,8 @@ export const DashboardScreen: React.FC = () => {
                       handleWatchLive(camera._id, camera.name, camera.isOwner !== false)
                     }
                   >
-                    <Text style={styles.watchLiveBtnText}>▶ Watch Live</Text>
+                    <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
+                    <Text style={styles.watchLiveBtnText}>Watch Live</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.detailsBtn}
@@ -246,7 +256,7 @@ export const DashboardScreen: React.FC = () => {
           </ScrollView>
         ) : (
           <View style={styles.emptyCamerasBox}>
-            <Text style={styles.emptyCamerasIcon}>📹</Text>
+            <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} style={{ marginBottom: SPACING.sm }} />
             <Text style={styles.emptyCamerasTitle}>No Cameras Configured</Text>
             <Text style={styles.emptyCamerasDesc}>
               Contact your local security franchise to install and configure CCTV units.
@@ -258,7 +268,7 @@ export const DashboardScreen: React.FC = () => {
         {dashboard?.customer?.franchiseContact ? (
           <View style={styles.franchiseCard}>
             <View style={styles.franchiseIconBox}>
-              <Text style={styles.franchiseIcon}>🏢</Text>
+              <HugeIcon icon={Building03Icon} size={22} color={COLORS.primary} />
             </View>
             <View style={{ flex: 1, marginLeft: SPACING.md }}>
               <Text style={styles.franchiseLabel}>Assigned Security Franchise</Text>
@@ -271,7 +281,8 @@ export const DashboardScreen: React.FC = () => {
                 style={styles.callFranchiseBtn}
                 onPress={() => handleFranchiseCall(dashboard.customer?.franchiseContact?.phone)}
               >
-                <Text style={styles.callFranchiseText}>📞 Call</Text>
+                <HugeIcon icon={Call02Icon} size={14} color={COLORS.primary} />
+                <Text style={styles.callFranchiseText}>Call</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -542,13 +553,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.button,
     paddingVertical: SPACING.xs + 3,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginRight: SPACING.xs,
   },
   watchLiveBtnText: {
     color: COLORS.textInverse,
     fontSize: 12,
     fontWeight: '700',
+    marginLeft: 4,
   },
   detailsBtn: {
     paddingHorizontal: SPACING.md,
@@ -574,10 +588,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     marginBottom: SPACING.lg,
-  },
-  emptyCamerasIcon: {
-    fontSize: 40,
-    marginBottom: SPACING.sm,
   },
   emptyCamerasTitle: {
     ...TYPOGRAPHY.h3,
@@ -609,9 +619,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  franchiseIcon: {
-    fontSize: 20,
-  },
   franchiseLabel: {
     ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
@@ -629,10 +636,13 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.button,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs + 2,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   callFranchiseText: {
     color: COLORS.primary,
     fontSize: 12,
     fontWeight: '700',
+    marginLeft: 4,
   },
 });

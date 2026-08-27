@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { SirenIcon, Cancel01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 
@@ -14,13 +16,13 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.closeButton}
         >
-          <Text style={styles.closeText}>✕</Text>
+          <HugeIcon icon={Cancel01Icon} size={18} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
         <View style={styles.sosIconContainer}>
-          <Text style={styles.sosIcon}>🚨</Text>
+          <HugeIcon icon={SirenIcon} size={48} color={COLORS.sosRed} strokeWidth={2} />
         </View>
 
         <Text style={styles.title}>EMERGENCY SOS</Text>
@@ -33,7 +35,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation }) => {
           activeOpacity={0.8}
           style={styles.sosTriggerBtn}
           onPress={() => {
-            alert('SOS Triggered (Phase 3 Full Hold Gesture)');
+            Alert.alert('SOS Triggered', 'Phase 3 Full Hold Gesture triggered.');
             navigation.goBack();
           }}
         >
@@ -62,11 +64,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  closeText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-  },
   content: {
     flex: 1,
     alignItems: 'center',
@@ -83,9 +80,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.xl,
-  },
-  sosIcon: {
-    fontSize: 48,
   },
   title: {
     ...TYPOGRAPHY.h1,

@@ -1,5 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { AlertCircleIcon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from './HugeIcon';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
 interface Props {
@@ -39,7 +41,12 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <View style={styles.container}>
           <ScrollView contentContainerStyle={styles.content}>
-            <Text style={styles.icon}>⚠️</Text>
+            <HugeIcon
+              icon={AlertCircleIcon}
+              size={52}
+              color={COLORS.sosRed}
+              style={{ marginBottom: SPACING.lg }}
+            />
             <Text style={styles.title}>Something went wrong</Text>
             <Text style={styles.subtitle}>
               An unexpected error occurred. Please try again or restart the application.
@@ -75,10 +82,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: SPACING.xxl,
-  },
-  icon: {
-    fontSize: 52,
-    marginBottom: SPACING.lg,
   },
   title: {
     ...TYPOGRAPHY.h2,

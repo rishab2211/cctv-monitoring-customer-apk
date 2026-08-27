@@ -15,6 +15,12 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  UserGroupIcon,
+  InformationCircleIcon,
+  AlertCircleIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { useShareCameraMutation } from './cameraApi';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ShareCamera'>;
@@ -72,7 +78,7 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View style={styles.iconCircle}>
-            <Text style={styles.icon}>👥</Text>
+            <HugeIcon icon={UserGroupIcon} size={28} color={COLORS.primary} strokeWidth={1.8} />
           </View>
           <Text style={styles.title}>Share Camera Access</Text>
           <Text style={styles.subtitle}>
@@ -83,7 +89,12 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
 
         {/* Subscription Requirement Notice */}
         <View style={styles.noticeCard}>
-          <Text style={styles.noticeIcon}>ℹ️</Text>
+          <HugeIcon
+            icon={InformationCircleIcon}
+            size={18}
+            color={COLORS.infoBlue}
+            style={{ marginRight: SPACING.sm, marginTop: 1 }}
+          />
           <Text style={styles.noticeText}>
             <Text style={{ fontWeight: '700' }}>Note:</Text> Shared recipients must have a registered account and an active subscription to watch live streams.
           </Text>
@@ -91,7 +102,8 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
 
         {errorMessage ? (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+            <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.sosRed} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -162,9 +174,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     ...SHADOWS.glowTeal,
   },
-  icon: {
-    fontSize: 28,
-  },
   title: {
     ...TYPOGRAPHY.h1,
     color: COLORS.textPrimary,
@@ -187,14 +196,10 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.card,
     padding: SPACING.md,
     flexDirection: 'row',
+    alignItems: 'flex-start',
     borderWidth: 1,
     borderColor: 'rgba(10, 132, 255, 0.25)',
     marginBottom: SPACING.lg,
-  },
-  noticeIcon: {
-    fontSize: 16,
-    marginRight: SPACING.sm,
-    marginTop: 2,
   },
   noticeText: {
     flex: 1,
@@ -209,11 +214,15 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   errorBannerText: {
     color: COLORS.sosRed,
     fontSize: 13,
     fontWeight: '600',
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   form: {
     backgroundColor: COLORS.surfaceCard,

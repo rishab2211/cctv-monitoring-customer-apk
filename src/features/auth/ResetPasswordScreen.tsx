@@ -17,6 +17,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  LockPasswordIcon,
+  ViewIcon,
+  ViewOffSlashIcon,
+  AlertCircleIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { resetPasswordSchema, ResetPasswordFormValues } from './schemas';
 import { useResetPasswordMutation } from './authApi';
 
@@ -83,7 +90,7 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View style={styles.iconCircle}>
-            <Text style={styles.icon}>🔒</Text>
+            <HugeIcon icon={LockPasswordIcon} size={28} color={COLORS.primary} strokeWidth={1.8} />
           </View>
           <Text style={styles.title}>Set New Password</Text>
           <Text style={styles.subtitle}>
@@ -93,7 +100,8 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
         {errorMessage ? (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+            <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.sosRed} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -126,7 +134,11 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
                 style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '🙈'}</Text>
+                <HugeIcon
+                  icon={showPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                  color={COLORS.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.newPassword ? (
@@ -162,9 +174,11 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
                 style={styles.eyeButton}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text style={styles.eyeIcon}>
-                  {showConfirmPassword ? '👁️' : '🙈'}
-                </Text>
+                <HugeIcon
+                  icon={showConfirmPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                  color={COLORS.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.confirmPassword ? (
@@ -176,9 +190,9 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.primaryButton, (!resetToken || isLoading) && styles.buttonDisabled]}
-            onPress={handleSubmit(onSubmit)}
-            disabled={!resetToken || isLoading}
+            style={[styles.primaryButton, isLoading && styles.buttonDisabled]}
+            onPress={() => handleSubmit(onSubmit)()}
+            disabled={isLoading}
           >
             {isLoading ? (
               <ActivityIndicator color={COLORS.textInverse} />
@@ -250,11 +264,15 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   errorBannerText: {
     color: COLORS.sosRed,
     fontSize: 13,
     fontWeight: '600',
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   form: {
     backgroundColor: COLORS.surfaceCard,

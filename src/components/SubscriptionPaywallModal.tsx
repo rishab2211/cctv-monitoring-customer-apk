@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Modal, TouchableOpacity } from 'react-native';
+import { AlertCircleIcon, StarIcon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from './HugeIcon';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 
 interface SubscriptionPaywallModalProps {
@@ -24,7 +26,12 @@ export const SubscriptionPaywallModal: React.FC<SubscriptionPaywallModalProps> =
       <View style={styles.overlay}>
         <View style={styles.card}>
           <View style={styles.iconCircle}>
-            <Text style={styles.icon}>{isPastDue ? '⚠️' : '⭐'}</Text>
+            <HugeIcon
+              icon={isPastDue ? AlertCircleIcon : StarIcon}
+              size={32}
+              color={isPastDue ? COLORS.warningAmber : COLORS.primary}
+              strokeWidth={1.8}
+            />
           </View>
 
           <Text style={styles.title}>
@@ -89,9 +96,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: SPACING.lg,
     ...SHADOWS.glowTeal,
-  },
-  icon: {
-    fontSize: 28,
   },
   title: {
     ...TYPOGRAPHY.h2,

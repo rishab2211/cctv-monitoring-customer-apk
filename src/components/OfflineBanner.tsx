@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import { WifiDisconnected01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from './HugeIcon';
 import { COLORS, SPACING } from '../constants/theme';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { setOffline } from '../app/slices/uiSlice';
@@ -29,7 +31,8 @@ export const OfflineBanner: React.FC = () => {
 
   return (
     <View style={styles.banner}>
-      <Text style={styles.text}>⚠️ No Internet Connection — Working in Offline Mode</Text>
+      <HugeIcon icon={WifiDisconnected01Icon} size={15} color="#000000" strokeWidth={2} />
+      <Text style={styles.text}>No Internet Connection — Working in Offline Mode</Text>
     </View>
   );
 };
@@ -39,6 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.warningAmber,
     paddingVertical: SPACING.xs + 2,
     paddingHorizontal: SPACING.md,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 99999,
@@ -47,5 +51,6 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 12,
     fontWeight: '700',
+    marginLeft: 6,
   },
 });

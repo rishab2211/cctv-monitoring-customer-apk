@@ -17,6 +17,14 @@ import { jwtDecode } from 'jwt-decode';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  Shield01Icon,
+  ViewIcon,
+  ViewOffSlashIcon,
+  AlertCircleIcon,
+  HourglassIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { loginSchema, LoginFormValues } from './schemas';
 import { useLoginMutation } from './authApi';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -121,7 +129,7 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
         {/* Brand Header */}
         <View style={styles.header}>
           <View style={styles.logoBadge}>
-            <Text style={styles.logoIcon}>🛡️</Text>
+            <HugeIcon icon={Shield01Icon} size={32} color={COLORS.primary} strokeWidth={1.8} />
           </View>
           <Text style={styles.title}>CCTV Security</Text>
           <Text style={styles.subtitle}>Sign in to monitor your protected premises</Text>
@@ -130,8 +138,9 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
         {/* Rate Limit Warning Banner */}
         {rateLimitCountdown && rateLimitCountdown > 0 ? (
           <View style={styles.rateLimitBanner}>
+            <HugeIcon icon={HourglassIcon} size={16} color={COLORS.warningAmber} />
             <Text style={styles.rateLimitText}>
-              ⏳ Rate limit active. Please wait {rateLimitCountdown}s before trying again.
+              Rate limit active. Please wait {rateLimitCountdown}s before trying again.
             </Text>
           </View>
         ) : null}
@@ -139,7 +148,8 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
         {/* Error Feedback Banner */}
         {errorMessage ? (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+            <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.sosRed} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -199,7 +209,11 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 onPress={() => setShowPassword(!showPassword)}
                 accessibilityLabel="Toggle password visibility"
               >
-                <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '🙈'}</Text>
+                <HugeIcon
+                  icon={showPassword ? ViewOffSlashIcon : ViewIcon}
+                  size={20}
+                  color={COLORS.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.password ? (
@@ -223,7 +237,7 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
               styles.primaryButton,
               (isLoading || (rateLimitCountdown ?? 0) > 0) && styles.buttonDisabled,
             ]}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => handleSubmit(onSubmit)()}
             disabled={isLoading || (rateLimitCountdown ?? 0) > 0}
           >
             {isLoading ? (
@@ -297,12 +311,15 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   rateLimitText: {
     color: COLORS.warningAmber,
     fontSize: 13,
     fontWeight: '600',
-    textAlign: 'center',
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   errorBanner: {
     backgroundColor: COLORS.sosRedMuted,
@@ -311,12 +328,16 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   errorBannerText: {
     color: COLORS.sosRed,
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 18,
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   form: {
     backgroundColor: COLORS.surfaceCard,

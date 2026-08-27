@@ -1,9 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ViewStyle } from 'react-native';
+import { Folder01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon, IconSvgElement } from './HugeIcon';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../constants/theme';
 
 interface EmptyStateProps {
-  icon?: string;
+  icon?: IconSvgElement;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -12,7 +14,7 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  icon = '📂',
+  icon = Folder01Icon,
   title,
   description,
   actionLabel,
@@ -21,7 +23,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.icon}>{icon}</Text>
+      <HugeIcon
+        icon={icon}
+        size={48}
+        color={COLORS.textMuted}
+        style={{ marginBottom: SPACING.md }}
+      />
       <Text style={styles.title}>{title}</Text>
       {description ? <Text style={styles.description}>{description}</Text> : null}
       {actionLabel && onAction ? (
@@ -42,10 +49,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: SPACING.xxl,
-  },
-  icon: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
   },
   title: {
     ...TYPOGRAPHY.h3,

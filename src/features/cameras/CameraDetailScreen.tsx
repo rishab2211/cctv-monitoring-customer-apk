@@ -11,6 +11,13 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  Location01Icon,
+  PlayIcon,
+  Clock01Icon,
+  UserGroupIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { StatusBadge } from '../../components/StatusBadge';
 import { useGetCamerasQuery, useRevokeCameraShareMutation } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
@@ -117,7 +124,10 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
 
           <View style={styles.locationContainer}>
-            <Text style={styles.locationLabel}>📍 Location Address</Text>
+            <View style={styles.locationLabelRow}>
+              <HugeIcon icon={Location01Icon} size={14} color={COLORS.textMuted} />
+              <Text style={styles.locationLabel}>Location Address</Text>
+            </View>
             <Text style={styles.locationValue}>
               {camera.location?.address || 'Main Entrance / Premises'}
             </Text>
@@ -130,14 +140,16 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             style={[styles.primaryActionBtn, styles.liveActionBtn]}
             onPress={handleWatchLive}
           >
-            <Text style={styles.liveActionText}>▶ Watch Live Stream</Text>
+            <HugeIcon icon={PlayIcon} size={16} color={COLORS.textInverse} />
+            <Text style={styles.liveActionText}>Watch Live Stream</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.primaryActionBtn, styles.playbackActionBtn]}
             onPress={handleWatchPlayback}
           >
-            <Text style={styles.playbackActionText}>⏱ Cloud Playback</Text>
+            <HugeIcon icon={Clock01Icon} size={16} color={COLORS.primary} />
+            <Text style={styles.playbackActionText}>Cloud Playback</Text>
           </TouchableOpacity>
         </View>
 
@@ -180,15 +192,15 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <Text style={styles.cardTitle}>Surveillance Features</Text>
           <View style={styles.featureRow}>
             <Text style={styles.featureName}>24/7 Cloud Recording</Text>
-            <Text style={styles.featureStatusActive}>● ACTIVE</Text>
+            <Text style={styles.featureStatusActive}>ACTIVE</Text>
           </View>
           <View style={styles.featureRow}>
             <Text style={styles.featureName}>AI Human & Vehicle Detection</Text>
-            <Text style={styles.featureStatusActive}>● ACTIVE</Text>
+            <Text style={styles.featureStatusActive}>ACTIVE</Text>
           </View>
           <View style={styles.featureRow}>
             <Text style={styles.featureName}>Emergency SOS Linking</Text>
-            <Text style={styles.featureStatusActive}>● ENABLED</Text>
+            <Text style={styles.featureStatusActive}>ENABLED</Text>
           </View>
         </View>
 
@@ -201,7 +213,8 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                 style={styles.addShareBtn}
                 onPress={() => navigation.navigate('ShareCamera', { camera, cameraId: camera._id })}
               >
-                <Text style={styles.addShareText}>+ Share Camera</Text>
+                <HugeIcon icon={UserGroupIcon} size={14} color={COLORS.primary} />
+                <Text style={styles.addShareText}>Share Camera</Text>
               </TouchableOpacity>
             </View>
 
@@ -310,10 +323,15 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
+  locationLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   locationLabel: {
     ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
-    marginBottom: 2,
+    marginLeft: 4,
   },
   locationValue: {
     ...TYPOGRAPHY.bodyMedium,
@@ -328,6 +346,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: RADIUS.button,
     paddingVertical: SPACING.md,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -340,6 +359,7 @@ const styles = StyleSheet.create({
     color: COLORS.textInverse,
     fontSize: 14,
     fontWeight: '700',
+    marginLeft: 6,
   },
   playbackActionBtn: {
     backgroundColor: COLORS.surfaceElevated,
@@ -350,6 +370,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 14,
     fontWeight: '700',
+    marginLeft: 6,
   },
   cardTitle: {
     ...TYPOGRAPHY.h3,
@@ -413,11 +434,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs,
     borderRadius: RADIUS.pill,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   addShareText: {
     color: COLORS.primary,
     fontSize: 12,
     fontWeight: '700',
+    marginLeft: 4,
   },
   sharedUserRow: {
     flexDirection: 'row',

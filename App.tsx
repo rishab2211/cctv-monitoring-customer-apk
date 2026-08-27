@@ -20,8 +20,6 @@ const App = () => {
             <SafeAreaProvider>
               <StatusBar
                 barStyle="light-content"
-                backgroundColor={COLORS.background}
-                translucent={false}
               />
               <ErrorBoundary>
                 <OfflineBanner />

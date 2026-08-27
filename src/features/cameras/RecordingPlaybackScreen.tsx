@@ -12,6 +12,16 @@ import Video, { VideoRef } from 'react-native-video';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  Film01Icon,
+  PlayIcon,
+  PauseIcon,
+  Backward01Icon,
+  Forward01Icon,
+  Download01Icon,
+  Clock01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { useGetCameraPlaybackQuery } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
@@ -93,7 +103,7 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
               <ActivityIndicator size="large" color={COLORS.primary} />
             ) : (
               <>
-                <Text style={styles.emptyVideoIcon}>📼</Text>
+                <HugeIcon icon={Film01Icon} size={48} color={COLORS.textMuted} style={{ marginBottom: SPACING.xs }} />
                 <Text style={styles.emptyVideoText}>No recordings found for this period</Text>
               </>
             )}
@@ -104,18 +114,25 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
         {activeVideoUrl ? (
           <View style={styles.playerControls}>
             <TouchableOpacity onPress={() => handleSeek(-10)} style={styles.seekButton}>
-              <Text style={styles.seekButtonText}>⏪ 10s</Text>
+              <HugeIcon icon={Backward01Icon} size={14} color="#FFFFFF" />
+              <Text style={styles.seekButtonText}>10s</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setIsPlaying(!isPlaying)}
               style={styles.playPauseButton}
             >
-              <Text style={styles.playPauseText}>{isPlaying ? '⏸' : '▶'}</Text>
+              <HugeIcon
+                icon={isPlaying ? PauseIcon : PlayIcon}
+                size={20}
+                color={COLORS.textInverse}
+                style={{ marginLeft: isPlaying ? 0 : 2 }}
+              />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => handleSeek(10)} style={styles.seekButton}>
-              <Text style={styles.seekButtonText}>10s ⏩</Text>
+              <Text style={styles.seekButtonText}>10s</Text>
+              <HugeIcon icon={Forward01Icon} size={14} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         ) : null}
@@ -154,7 +171,7 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
                 onPress={() => setSelectedChunk(chunk)}
               >
                 <View style={styles.chunkIconBox}>
-                  <Text style={styles.chunkIcon}>🎬</Text>
+                  <HugeIcon icon={Film01Icon} size={20} color={COLORS.primary} />
                 </View>
 
                 <View style={{ flex: 1, marginLeft: SPACING.md }}>
@@ -172,7 +189,8 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
                     style={styles.downloadBtn}
                     onPress={() => handleDownload(chunk)}
                   >
-                    <Text style={styles.downloadBtnText}>⬇ Save</Text>
+                    <HugeIcon icon={Download01Icon} size={13} color={COLORS.textSecondary} />
+                    <Text style={styles.downloadBtnText}>Save</Text>
                   </TouchableOpacity>
                 ) : null}
               </TouchableOpacity>
@@ -180,7 +198,7 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
           })
         ) : (
           <View style={styles.noChunksBox}>
-            <Text style={styles.noChunksIcon}>⏱</Text>
+            <HugeIcon icon={Clock01Icon} size={36} color={COLORS.textMuted} style={{ marginBottom: SPACING.sm }} />
             <Text style={styles.noChunksTitle}>No Recorded Footage</Text>
             <Text style={styles.noChunksDesc}>
               Continuous recording activates automatically when your CCTV camera is online.
@@ -249,11 +267,14 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.xs + 2,
     borderRadius: RADIUS.pill,
     marginHorizontal: SPACING.md,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   seekButtonText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
+    marginHorizontal: 4,
   },
   playPauseButton: {
     width: 44,
@@ -263,10 +284,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...SHADOWS.glowTeal,
-  },
-  playPauseText: {
-    color: COLORS.textInverse,
-    fontSize: 18,
   },
   content: {
     padding: SPACING.lg,
@@ -314,9 +331,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chunkIcon: {
-    fontSize: 20,
-  },
   chunkTime: {
     fontSize: 14,
     fontWeight: '700',
@@ -337,11 +351,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs + 2,
     borderRadius: RADIUS.pill,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   downloadBtnText: {
     color: COLORS.textSecondary,
     fontSize: 12,
     fontWeight: '600',
+    marginLeft: 4,
   },
   noChunksBox: {
     backgroundColor: COLORS.surfaceCard,

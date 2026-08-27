@@ -15,6 +15,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import {
+  Key01Icon,
+  AlertCircleIcon,
+  ArrowLeft01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { forgotPasswordSchema, ForgotPasswordFormValues } from './schemas';
 import { useForgotPasswordMutation } from './authApi';
 
@@ -65,7 +71,7 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View style={styles.iconCircle}>
-            <Text style={styles.icon}>🔑</Text>
+            <HugeIcon icon={Key01Icon} size={28} color={COLORS.primary} strokeWidth={1.8} />
           </View>
           <Text style={styles.title}>Forgot Password?</Text>
           <Text style={styles.subtitle}>
@@ -75,7 +81,8 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
 
         {errorMessage ? (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+            <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.sosRed} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
           </View>
         ) : null}
 
@@ -107,7 +114,7 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
           <TouchableOpacity
             activeOpacity={0.8}
             style={[styles.primaryButton, isLoading && styles.buttonDisabled]}
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => handleSubmit(onSubmit)()}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -123,7 +130,8 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
           onPress={() => navigation.goBack()}
           disabled={isLoading}
         >
-          <Text style={styles.backLinkText}>← Back to Sign In</Text>
+          <HugeIcon icon={ArrowLeft01Icon} size={16} color={COLORS.textSecondary} />
+          <Text style={styles.backLinkText}>Back to Sign In</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -157,9 +165,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     ...SHADOWS.glowTeal,
   },
-  icon: {
-    fontSize: 28,
-  },
   title: {
     ...TYPOGRAPHY.h1,
     color: COLORS.textPrimary,
@@ -180,11 +185,15 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   errorBannerText: {
     color: COLORS.sosRed,
     fontSize: 13,
     fontWeight: '600',
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   form: {
     backgroundColor: COLORS.surfaceCard,
@@ -238,11 +247,14 @@ const styles = StyleSheet.create({
   },
   backLink: {
     marginTop: SPACING.xxl,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   backLinkText: {
     color: COLORS.textSecondary,
     fontSize: 14,
     fontWeight: '600',
+    marginLeft: 6,
   },
 });

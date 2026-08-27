@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
+import {
+  getMessaging,
+  requestPermission,
+  getToken,
+  onTokenRefresh,
+  AuthorizationStatus,
+} from '@react-native-firebase/messaging';
 import { axiosInstance } from '../api/axiosInstance';
 import { useAppSelector } from './redux';
 
@@ -15,11 +21,13 @@ export const useFCMToken = () => {
 
     const registerFCMDevice = async () => {
       try {
+        const messagingInstance = getMessaging();
+
         // Request user permission for notifications
-        const authStatus = await messaging().requestPermission();
+        const authStatus = await requestPermission(messagingInstance);
         const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+          authStatus === AuthorizationStatus.AUTHORIZED ||
+          authStatus === AuthorizationStatus.PROVISIONAL;
 
         if (!enabled) {
           console.log('[FCM] Notification permission not granted');
@@ -27,7 +35,7 @@ export const useFCMToken = () => {
         }
 
         // Get FCM Device Token
-        const fcmToken = await messaging().getToken();
+        const fcmToken = await getToken(messagingInstance);
         if (fcmToken && isMounted) {
           console.log('[FCM] Token retrieved:', fcmToken.substring(0, 15) + '...');
           await axiosInstance.post('/notifications/register-device', {
@@ -46,7 +54,8 @@ export const useFCMToken = () => {
 
     // Listen for FCM token refresh with safe initialization guard
     try {
-      unsubscribeTokenRefresh = messaging().onTokenRefresh(async (newToken) => {
+      const messagingInstance = getMessaging();
+      unsubscribeTokenRefresh = onTokenRefresh(messagingInstance, async (newToken: string) => {
         try {
           console.log('[FCM] Token refreshed, re-registering...');
           await axiosInstance.post('/notifications/register-device', {

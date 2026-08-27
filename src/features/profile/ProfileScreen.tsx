@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Logout01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../../components/HugeIcon';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { logout } from '../../app/slices/authSlice';
@@ -36,6 +38,7 @@ export const ProfileScreen: React.FC = () => {
         style={styles.logoutButton}
         onPress={handleLogout}
       >
+        <HugeIcon icon={Logout01Icon} size={18} color={COLORS.sosRed} />
         <Text style={styles.logoutText}>Sign Out</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -110,11 +113,14 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 59, 48, 0.3)',
     borderRadius: RADIUS.button,
     paddingVertical: SPACING.md,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   logoutText: {
     color: COLORS.sosRed,
     fontWeight: '700',
     fontSize: 16,
+    marginLeft: SPACING.xs + 2,
   },
 });

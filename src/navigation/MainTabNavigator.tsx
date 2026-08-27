@@ -1,6 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  Home01Icon,
+  CctvCameraIcon,
+  CreditCardIcon,
+  UserIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../components/HugeIcon';
 import { MainTabParamList } from './types';
 import { DashboardScreen } from '../features/dashboard/DashboardScreen';
 import { CameraListScreen } from '../features/cameras/CameraListScreen';
@@ -45,7 +52,9 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Text style={[styles.icon, { color }]}>🏠</Text>,
+          tabBarIcon: ({ color }) => (
+            <HugeIcon icon={Home01Icon} size={22} color={color} strokeWidth={1.8} />
+          ),
         }}
       />
       <Tab.Screen
@@ -54,7 +63,9 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Cameras',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Text style={[styles.icon, { color }]}>📹</Text>,
+          tabBarIcon: ({ color }) => (
+            <HugeIcon icon={CctvCameraIcon} size={22} color={color} strokeWidth={1.8} />
+          ),
         }}
       />
       <Tab.Screen
@@ -63,7 +74,9 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Billing',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Text style={[styles.icon, { color }]}>💳</Text>,
+          tabBarIcon: ({ color }) => (
+            <HugeIcon icon={CreditCardIcon} size={22} color={color} strokeWidth={1.8} />
+          ),
         }}
       />
       <Tab.Screen
@@ -72,15 +85,12 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Text style={[styles.icon, { color }]}>👤</Text>,
+          tabBarIcon: ({ color }) => (
+            <HugeIcon icon={UserIcon} size={22} color={color} strokeWidth={1.8} />
+          ),
         }}
       />
     </Tab.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  icon: {
-    fontSize: 18,
-  },
-});
