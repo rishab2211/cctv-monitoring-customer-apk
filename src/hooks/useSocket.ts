@@ -111,6 +111,39 @@ export const useSocket = () => {
       }
     });
 
+    // 6. Support Ticket events (ticket_updated, ticket_comment, ticket_closed)
+    socket.on('ticket_updated', (data) => {
+      console.log('[Socket.IO] Ticket updated:', data);
+      const creatorId =
+        typeof data?.createdBy === 'object' ? data?.createdBy?._id : data?.createdBy;
+      const targetUserId = data?.userId || data?.customerId || creatorId;
+
+      if (!targetUserId || targetUserId === user?._id) {
+        dispatch(baseApi.util.invalidateTags(['Tickets']));
+      }
+    });
+
+    socket.on('ticket_comment', (data) => {
+      console.log('[Socket.IO] Ticket comment received:', data);
+      dispatch(baseApi.util.invalidateTags(['Tickets']));
+    });
+
+    socket.on('ticket_closed', (data) => {
+      console.log('[Socket.IO] Ticket closed:', data);
+      dispatch(baseApi.util.invalidateTags(['Tickets']));
+    });
+
+    // 7. Subscription & Payment webhook events
+    socket.on('subscription_updated', (data) => {
+      console.log('[Socket.IO] Subscription updated:', data);
+      dispatch(baseApi.util.invalidateTags(['Billing', 'Dashboard']));
+    });
+
+    socket.on('payment_success', (data) => {
+      console.log('[Socket.IO] Payment success event:', data);
+      dispatch(baseApi.util.invalidateTags(['Billing', 'Dashboard']));
+    });
+
     return () => {
       socket.disconnect();
       socketInstance = null;

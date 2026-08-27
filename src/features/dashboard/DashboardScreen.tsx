@@ -20,10 +20,12 @@ import {
   PlayIcon,
   Building03Icon,
   Call02Icon,
+  Shield01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { StatusBadge } from '../../components/StatusBadge';
 import { useGetDashboardQuery } from './dashboardApi';
+import { useGetIncidentsQuery } from '../incidents/incidentsApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useAppSelector } from '../../hooks/redux';
@@ -35,6 +37,9 @@ export const DashboardScreen: React.FC = () => {
 
   const { data: dashboardResponse, isLoading, isFetching, refetch } = useGetDashboardQuery();
   const dashboard = dashboardResponse?.data;
+
+  const { data: incidentsResponse } = useGetIncidentsQuery();
+  const incidents = incidentsResponse?.data?.incidents || [];
 
   const subscriptionStatus = dashboard?.subscription?.status || 'active';
   const { canStream, paywallType } = useSubscriptionGuard({
@@ -261,6 +266,56 @@ export const DashboardScreen: React.FC = () => {
             <Text style={styles.emptyCamerasDesc}>
               Contact your local security franchise to install and configure CCTV units.
             </Text>
+          </View>
+        )}
+
+        {/* Recent Incidents Section */}
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>Security Incidents</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('IncidentList')}>
+            <Text style={styles.sectionLink}>View All</Text>
+          </TouchableOpacity>
+        </View>
+
+        {incidents.length > 0 ? (
+          <View style={styles.incidentsContainer}>
+            {incidents.slice(0, 2).map((inc) => (
+              <TouchableOpacity
+                key={inc._id}
+                style={styles.incidentRowCard}
+                onPress={() =>
+                  navigation.navigate('IncidentDetail', {
+                    incidentId: inc._id,
+                    incident: inc,
+                  })
+                }
+              >
+                <View style={styles.incidentIconCircle}>
+                  <HugeIcon icon={Shield01Icon} size={16} color={COLORS.primary} />
+                </View>
+                <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+                  <Text style={styles.incidentRowTitle} numberOfLines={1}>
+                    {inc.title}
+                  </Text>
+                  <Text style={styles.incidentRowDate}>
+                    {new Date(inc.createdAt).toLocaleDateString()} • {inc.type.replace('_', ' ').toUpperCase()}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.incidentStatusPill,
+                    inc.status === 'open' && styles.statusOpenPill,
+                    inc.status === 'resolved' && styles.statusResolvedPill,
+                  ]}
+                >
+                  <Text style={styles.incidentStatusText}>{inc.status.toUpperCase()}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.emptyIncidentsBox}>
+            <Text style={styles.emptyIncidentsText}>No recent incidents reported on your premises.</Text>
           </View>
         )}
 
@@ -644,5 +699,66 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     marginLeft: 4,
+  },
+  incidentsContainer: {
+    marginBottom: SPACING.md,
+  },
+  incidentRowCard: {
+    backgroundColor: COLORS.surfaceCard,
+    borderRadius: RADIUS.sm,
+    padding: SPACING.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: SPACING.xs,
+  },
+  incidentIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.surfaceElevated,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  incidentRowTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+  },
+  incidentRowDate: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.textMuted,
+    marginTop: 1,
+  },
+  incidentStatusPill: {
+    backgroundColor: COLORS.surfaceElevated,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    borderRadius: RADIUS.xs,
+  },
+  statusOpenPill: {
+    backgroundColor: COLORS.warningAmberMuted,
+  },
+  statusResolvedPill: {
+    backgroundColor: COLORS.successGreenMuted,
+  },
+  incidentStatusText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: COLORS.textPrimary,
+  },
+  emptyIncidentsBox: {
+    backgroundColor: COLORS.surfaceCard,
+    borderRadius: RADIUS.sm,
+    padding: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: SPACING.md,
+    alignItems: 'center',
+  },
+  emptyIncidentsText: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.textMuted,
   },
 });

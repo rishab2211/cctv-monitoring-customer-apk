@@ -2,7 +2,14 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Logout01Icon, SirenIcon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
+import {
+  Logout01Icon,
+  SirenIcon,
+  ArrowRight01Icon,
+  Shield01Icon,
+  CustomerSupportIcon,
+  Invoice01Icon,
+} from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/theme';
@@ -39,6 +46,61 @@ export const ProfileScreen: React.FC = () => {
 
       {/* Profile Navigation Menu Options */}
       <View style={styles.menuSection}>
+        {/* Incident Reports */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('IncidentList')}
+        >
+          <View style={styles.menuIconCircle}>
+            <HugeIcon icon={Shield01Icon} size={18} color={COLORS.primary} />
+          </View>
+          <View style={styles.menuTextContainer}>
+            <Text style={styles.menuTitle}>My Incident Reports</Text>
+            <Text style={styles.menuSubtitle}>View filed incident breaches & notes</Text>
+          </View>
+          <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
+        </TouchableOpacity>
+
+        <View style={styles.menuDivider} />
+
+        {/* Support Tickets */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('TicketList')}
+        >
+          <View style={styles.menuIconCircle}>
+            <HugeIcon icon={CustomerSupportIcon} size={18} color={COLORS.infoBlue} />
+          </View>
+          <View style={styles.menuTextContainer}>
+            <Text style={styles.menuTitle}>Support Tickets</Text>
+            <Text style={styles.menuSubtitle}>Get direct assistance from franchise</Text>
+          </View>
+          <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
+        </TouchableOpacity>
+
+        <View style={styles.menuDivider} />
+
+        {/* Invoices */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('InvoiceList')}
+        >
+          <View style={styles.menuIconCircle}>
+            <HugeIcon icon={Invoice01Icon} size={18} color={COLORS.warningAmber} />
+          </View>
+          <View style={styles.menuTextContainer}>
+            <Text style={styles.menuTitle}>Invoices & Statements</Text>
+            <Text style={styles.menuSubtitle}>Download PDF payment receipts</Text>
+          </View>
+          <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
+        </TouchableOpacity>
+
+        <View style={styles.menuDivider} />
+
+        {/* SOS Emergency */}
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.menuItem}
@@ -163,6 +225,11 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
     marginTop: 2,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginLeft: 56,
   },
   logoutButton: {
     backgroundColor: COLORS.sosRedMuted,
