@@ -14,20 +14,24 @@ export const useInactivityTimer = () => {
     if (!isAuthenticated) return;
 
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background') {
-        backgroundTimestampRef.current = Date.now();
-      } else if (nextAppState === 'active' && backgroundTimestampRef.current) {
-        const elapsed = Date.now() - backgroundTimestampRef.current;
-        backgroundTimestampRef.current = null;
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        if (!backgroundTimestampRef.current) {
+          backgroundTimestampRef.current = Date.now();
+        }
+      } else if (nextAppState === 'active') {
+        if (backgroundTimestampRef.current) {
+          const elapsed = Date.now() - backgroundTimestampRef.current;
+          backgroundTimestampRef.current = null;
 
-        if (elapsed >= CONFIG.INACTIVITY_TIMEOUT_MS) {
-          console.log('[Auth] Inactivity timeout reached. Logging out...');
-          await clearTokens();
-          dispatch(logout());
-          Alert.alert(
-            'Session Expired',
-            'You have been logged out due to 30 minutes of inactivity. Please sign in again.'
-          );
+          if (elapsed >= CONFIG.INACTIVITY_TIMEOUT_MS) {
+            console.log('[Auth] Inactivity timeout reached (30m). Logging out...');
+            await clearTokens();
+            dispatch(logout());
+            Alert.alert(
+              'Session Expired',
+              'You have been logged out due to 30 minutes of inactivity. Please sign in again.'
+            );
+          }
         }
       }
     };

@@ -1,18 +1,25 @@
 import { useMemo } from 'react';
-import { useAppSelector } from './redux';
+import { useGetCustomerSubscriptionQuery } from '../features/billing/billingApi';
+import { SubscriptionStatus } from '../types';
 
 export type PaywallType = 'upgrade' | 'pay_now' | null;
 
 interface UseSubscriptionGuardOptions {
-  statusOverride?: string;
+  statusOverride?: SubscriptionStatus | string;
+  skipFetch?: boolean;
 }
 
 export const useSubscriptionGuard = (options?: UseSubscriptionGuardOptions) => {
-  // In later phases, subscription will also be synced from RTK query cache / dashboard endpoint
-  const user = useAppSelector((state) => state.auth.user);
+  const { data: subResponse, isLoading } = useGetCustomerSubscriptionQuery(undefined, {
+    skip: !!options?.skipFetch,
+  });
 
-  // Status can come from props override or customer's cached status
-  const currentStatus = options?.statusOverride || 'active'; // default optimistic for unconfigured mocks, strictly checked against 'active'
+  const sub = subResponse?.data;
+  const fetchedStatus = sub?.status as SubscriptionStatus | undefined;
+
+  // Status precedence: explicit override > fetched active subscription status > 'inactive'
+  const currentStatus: SubscriptionStatus | string =
+    options?.statusOverride || fetchedStatus || 'inactive';
 
   const { canStream, paywallType } = useMemo(() => {
     if (currentStatus === 'active') {
@@ -21,7 +28,7 @@ export const useSubscriptionGuard = (options?: UseSubscriptionGuardOptions) => {
     if (currentStatus === 'past_due') {
       return { canStream: false, paywallType: 'pay_now' as PaywallType };
     }
-    // 'canceled', 'expired', 'pending_payment', or undefined
+    // 'canceled', 'expired', 'inactive', 'pending_payment', or unconfigured
     return { canStream: false, paywallType: 'upgrade' as PaywallType };
   }, [currentStatus]);
 
@@ -43,5 +50,8 @@ export const useSubscriptionGuard = (options?: UseSubscriptionGuardOptions) => {
     paywallType,
     currentStatus,
     guardAction,
+    isLoadingSubscription: isLoading,
+    subscription: sub,
   };
 };
+

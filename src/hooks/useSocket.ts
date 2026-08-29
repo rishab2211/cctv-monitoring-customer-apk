@@ -133,7 +133,20 @@ export const useSocket = () => {
       dispatch(baseApi.util.invalidateTags(['Tickets']));
     });
 
-    // 7. Subscription & Payment webhook events
+    // 7. Camera status & lifecycle events
+    const handleCameraStatusChange = (data: any) => {
+      console.log('[Socket.IO] Camera status changed:', data);
+      dispatch(baseApi.util.invalidateTags(['Cameras', 'Dashboard']));
+    };
+
+    socket.on('camera:status', handleCameraStatusChange);
+    socket.on('camera_status', handleCameraStatusChange);
+    socket.on('camera_online', handleCameraStatusChange);
+    socket.on('camera_offline', handleCameraStatusChange);
+    socket.on('camera_created', handleCameraStatusChange);
+    socket.on('camera_deleted', handleCameraStatusChange);
+
+    // 8. Subscription & Payment webhook events
     socket.on('subscription_updated', (data) => {
       console.log('[Socket.IO] Subscription updated:', data);
       dispatch(baseApi.util.invalidateTags(['Billing', 'Dashboard']));
