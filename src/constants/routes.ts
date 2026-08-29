@@ -53,4 +53,5 @@ export const ROUTES = {
   CHANGE_PASSWORD: 'ChangePassword',
   SESSIONS: 'Sessions',
   NOTIF_PREFERENCES: 'NotifPreferences',
+  ABOUT: 'About',
 } as const;

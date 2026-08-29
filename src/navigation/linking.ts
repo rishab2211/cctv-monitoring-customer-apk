@@ -10,7 +10,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
         screens: {
           TabHome: 'dashboard',
           TabCameras: 'cameras-tab',
-          TabBilling: 'billing-tab',
+          TabBilling: 'billing/subscription',
           TabProfile: 'profile-tab',
         },
       },
@@ -18,7 +18,6 @@ export const linking: LinkingOptions<RootStackParamList> = {
       CameraDetail: 'cameras/:cameraId',
       LiveView: 'cameras/:cameraId/live',
       RecordingPlayback: 'cameras/:cameraId/playback',
-      SubscriptionDetail: 'billing/subscription',
       PlanSelection: 'billing/plans',
       Payment: 'billing/payment',
       InvoiceList: 'billing/invoices',

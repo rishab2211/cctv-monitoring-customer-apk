@@ -78,6 +78,12 @@ export const useFCMToken = (navigationRef?: any) => {
         nav.navigate('TicketDetail', { ticketId: entityId });
       } else if (entityType === 'camera' && entityId) {
         nav.navigate('LiveView', { cameraId: entityId });
+      } else if (entityType === 'invoice' && entityId) {
+        nav.navigate('InvoiceDetail', { invoiceId: entityId });
+      } else if (entityType === 'invoice') {
+        nav.navigate('InvoiceList');
+      } else if (entityType === 'subscription') {
+        nav.navigate('MainTabs', { screen: 'TabBilling' });
       } else {
         nav.navigate('Notifications');
       }

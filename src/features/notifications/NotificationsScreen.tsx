@@ -84,8 +84,12 @@ export const NotificationsScreen: React.FC<Props> = ({ navigation }) => {
       navigation.navigate('TicketDetail', { ticketId: entityId });
     } else if (entityType === 'camera' && entityId) {
       navigation.navigate('LiveView', { cameraId: entityId });
-    } else if (entityType === 'subscription' || entityType === 'invoice') {
+    } else if (entityType === 'invoice' && entityId) {
+      navigation.navigate('InvoiceDetail', { invoiceId: entityId });
+    } else if (entityType === 'invoice') {
       navigation.navigate('InvoiceList');
+    } else if (entityType === 'subscription') {
+      navigation.navigate('MainTabs', { screen: 'TabBilling' });
     }
   };
 
