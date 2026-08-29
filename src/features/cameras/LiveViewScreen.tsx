@@ -82,6 +82,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
     let isMounted = true;
     const streamInfo = liveInfoResponse.data;
     if (streamInfo.sessionId) {
+      sessionIdRef.current = streamInfo.sessionId;
       setSessionId(streamInfo.sessionId);
     }
 
@@ -132,6 +133,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
 
         // Create SDP Offer
         const offer = await pc.createOffer({});
+        if (!isMounted) return;
         await pc.setLocalDescription(offer);
 
         // Relay SDP Offer to backend MediaMTX WHEP endpoint
@@ -141,12 +143,16 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
           type: 'offer',
         }).unwrap();
 
+        if (!isMounted) return;
+
         if (answerResponse.data?.sdp) {
           const remoteDesc = new RTCSessionDescription({
             type: 'answer',
             sdp: answerResponse.data.sdp,
           });
-          await pc.setRemoteDescription(remoteDesc);
+          if (pcRef.current && isMounted) {
+            await pcRef.current.setRemoteDescription(remoteDesc);
+          }
         }
       } catch (err: any) {
         console.warn('[WebRTC] Handshake error:', err);
@@ -161,7 +167,9 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
     return () => {
       isMounted = false;
       if (pcRef.current) {
-        pcRef.current.close();
+        try {
+          pcRef.current.close();
+        } catch (e) {}
         pcRef.current = null;
       }
     };

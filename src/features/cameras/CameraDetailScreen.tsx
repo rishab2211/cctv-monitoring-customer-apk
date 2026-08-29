@@ -22,10 +22,12 @@ import { StatusBadge } from '../../components/StatusBadge';
 import { useGetCamerasQuery, useRevokeCameraShareMutation } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
+import { useAppSelector } from '../../hooks/redux';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CameraDetail'>;
 
 export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
+  const user = useAppSelector((state) => state.auth.user);
   const passedCamera = route.params?.camera;
   const cameraId = passedCamera?._id || route.params?.cameraId || '';
 
@@ -62,7 +64,7 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     );
   }
 
-  const isOwner = camera.isOwner !== false;
+  const isOwner = camera.customerId === user?._id || camera.isOwner === true;
 
   const handleWatchLive = () => {
     if (canStream) {

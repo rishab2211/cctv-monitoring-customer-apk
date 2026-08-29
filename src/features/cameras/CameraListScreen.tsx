@@ -29,6 +29,7 @@ import { StatusBadge } from '../../components/StatusBadge';
 import { useGetCamerasQuery } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
+import { useAppSelector } from '../../hooks/redux';
 import { Camera } from '../../types';
 
 type FilterType = 'all' | 'online' | 'offline' | 'mine' | 'shared';
@@ -36,6 +37,7 @@ type FilterType = 'all' | 'online' | 'offline' | 'mine' | 'shared';
 export const CameraListScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, 'CameraList'>>();
+  const user = useAppSelector((state) => state.auth.user);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>(
@@ -50,6 +52,8 @@ export const CameraListScreen: React.FC = () => {
 
   const filteredCameras = useMemo(() => {
     return cameras.filter((cam) => {
+      const isOwner = cam.customerId === user?._id || cam.isOwner === true;
+
       // 1. Search Query Match
       const matchesSearch =
         searchQuery.trim() === '' ||
@@ -62,19 +66,20 @@ export const CameraListScreen: React.FC = () => {
       // 2. Filter Tab Match
       if (activeFilter === 'online') return cam.status === 'online';
       if (activeFilter === 'offline') return cam.status === 'offline';
-      if (activeFilter === 'mine') return cam.isOwner !== false;
-      if (activeFilter === 'shared') return cam.isOwner === false;
+      if (activeFilter === 'mine') return isOwner;
+      if (activeFilter === 'shared') return !isOwner;
 
       return true;
     });
-  }, [cameras, searchQuery, activeFilter]);
+  }, [cameras, searchQuery, activeFilter, user?._id]);
 
   const handleWatchLive = (camera: Camera) => {
+    const isOwner = camera.customerId === user?._id || camera.isOwner === true;
     if (canStream) {
       navigation.navigate('LiveView', {
         cameraId: camera._id,
         cameraName: camera.name,
-        isOwner: camera.isOwner !== false,
+        isOwner,
       });
     } else {
       setPaywallVisible(true);
@@ -82,11 +87,12 @@ export const CameraListScreen: React.FC = () => {
   };
 
   const handleWatchPlayback = (camera: Camera) => {
+    const isOwner = camera.customerId === user?._id || camera.isOwner === true;
     if (canStream) {
       navigation.navigate('RecordingPlayback', {
         cameraId: camera._id,
         cameraName: camera.name,
-        isOwner: camera.isOwner !== false,
+        isOwner,
       });
     } else {
       setPaywallVisible(true);

@@ -48,12 +48,11 @@ export const DashboardScreen: React.FC = () => {
     notifsResponse?.data?.unreadCount ??
     (notifsResponse?.data?.notifications?.filter((n) => !n.isRead).length || 0);
 
-  const subscriptionStatus = dashboard?.subscription?.status || 'active';
   const { canStream, paywallType } = useSubscriptionGuard({
-    statusOverride: subscriptionStatus,
+    statusOverride: dashboard?.subscription?.status,
   });
 
-  const handleWatchLive = (cameraId: string, cameraName: string, isOwner: boolean = true) => {
+  const handleWatchLive = (cameraId: string, cameraName: string, isOwner: boolean = false) => {
     if (canStream) {
       navigation.navigate('LiveView', { cameraId, cameraName, isOwner });
     } else {
@@ -267,7 +266,11 @@ export const DashboardScreen: React.FC = () => {
                   <TouchableOpacity
                     style={styles.watchLiveBtn}
                     onPress={() =>
-                      handleWatchLive(camera._id, camera.name, camera.isOwner !== false)
+                      handleWatchLive(
+                        camera._id,
+                        camera.name,
+                        camera.customerId === user?._id || camera.isOwner === true
+                      )
                     }
                   >
                     <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />

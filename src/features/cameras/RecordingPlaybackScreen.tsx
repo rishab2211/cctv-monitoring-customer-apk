@@ -22,15 +22,30 @@ import {
   Clock01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
-import { useGetCameraPlaybackQuery } from './cameraApi';
+import {
+  useGetCameraPlaybackQuery,
+  useGetCameraDetailQuery,
+  PlaybackChunk,
+} from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
-import { PlaybackChunk } from './cameraApi';
+import { useAppSelector } from '../../hooks/redux';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecordingPlayback'>;
 
 export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { cameraId, cameraName = 'Camera Playback', isOwner = true } = route.params;
+  const { cameraId, cameraName = 'Camera Playback' } = route.params;
+  const user = useAppSelector((state) => state.auth.user);
+
+  const { data: cameraDetailResponse } = useGetCameraDetailQuery(cameraId);
+  const camera = cameraDetailResponse?.data?.camera;
+
+  const isOwner =
+    route.params.isOwner !== undefined
+      ? route.params.isOwner
+      : camera
+      ? camera.customerId === user?._id
+      : false;
 
   const [selectedChunk, setSelectedChunk] = useState<PlaybackChunk | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
