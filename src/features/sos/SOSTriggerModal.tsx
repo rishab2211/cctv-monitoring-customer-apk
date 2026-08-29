@@ -9,6 +9,7 @@ import {
   ScrollView,
   Platform,
   Alert,
+  BackHandler,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Animated, {
@@ -84,6 +85,20 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
       true
     );
   }, [pulseScale]);
+
+  // Hardware Back Button Guard on Android during active in-flight dispatch
+  useEffect(() => {
+    const onBackPress = () => {
+      if (isTriggering) {
+        // Prevent accidental dismissal while emergency network request is actively transmitting
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => backHandler.remove();
+  }, [isTriggering]);
 
   // Mock / Geolocation coords
   useEffect(() => {

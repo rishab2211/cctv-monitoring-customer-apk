@@ -120,11 +120,29 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
           : undefined,
       }).unwrap();
 
-      const updatedUser = response?.data?.user || (response?.data as any) || {
-        ...user,
-        name: values.name.trim(),
-        phone: values.phone.trim(),
-      };
+      const updatedUser =
+        response?.data?.user ||
+        (response?.data as any) || {
+          ...user,
+          name: values.name.trim(),
+          phone: values.phone.trim(),
+          emergencyContact: values.emergencyName
+            ? {
+                name: values.emergencyName.trim(),
+                phone: values.emergencyPhone?.trim() || '',
+                relation: values.emergencyRelation?.trim() || '',
+              }
+            : user?.emergencyContact,
+          address:
+            values.street || values.city
+              ? {
+                  street: values.street?.trim(),
+                  city: values.city?.trim(),
+                  state: values.state?.trim(),
+                  pincode: values.pincode?.trim(),
+                }
+              : user?.address,
+        };
       if (updatedUser) {
         dispatch(setUser(updatedUser));
       }
