@@ -44,7 +44,7 @@ export const BillingScreen: React.FC = () => {
 
   const sub = subResponse?.data;
   const planName = sub?.planName || (typeof sub?.planId === 'object' ? sub?.planId?.name : 'Standard Security');
-  const planPrice = sub?.amount || (typeof sub?.planId === 'object' ? sub?.planId?.price : 19.99);
+  const planPrice = sub?.amount || (typeof sub?.planId === 'object' ? sub?.planId?.price : 999);
 
   // Calculate days remaining progress
   const startDate = sub?.startDate ? new Date(sub.startDate) : new Date();

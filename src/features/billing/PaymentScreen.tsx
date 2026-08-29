@@ -53,6 +53,7 @@ export const PaymentScreen: React.FC<Props> = ({ navigation, route }) => {
       // 1. Request Razorpay Order from Backend
       let orderId = `order_${Date.now()}`;
       let keyId = 'rzp_test_placeholder';
+      let orderAmountInPaise = Math.round(amount * 100);
 
       const isMongoId = /^[0-9a-fA-F]{24}$/.test(subscriptionId || '');
       if (subscriptionId && isMongoId) {
@@ -60,6 +61,12 @@ export const PaymentScreen: React.FC<Props> = ({ navigation, route }) => {
           const orderRes = await createOrderMutation({ subscriptionId }).unwrap();
           orderId = orderRes.data?.orderId || orderId;
           keyId = orderRes.data?.razorpayKeyId || keyId;
+          if (orderRes.data?.amount) {
+            orderAmountInPaise =
+              orderRes.data.amount > amount
+                ? orderRes.data.amount
+                : Math.round(orderRes.data.amount * 100);
+          }
         } catch (orderErr) {
           console.warn('[Razorpay] Order creation endpoint fallback:', orderErr);
         }
@@ -71,7 +78,7 @@ export const PaymentScreen: React.FC<Props> = ({ navigation, route }) => {
         image: 'https://cdn-icons-png.flaticon.com/512/3670/3670157.png',
         currency: 'INR',
         key: keyId,
-        amount: Math.round(amount * 100), // In paise
+        amount: orderAmountInPaise, // In paise
         name: 'SecureEye CCTV Surveillance',
         order_id: orderId,
         prefill: {

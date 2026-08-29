@@ -43,7 +43,7 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
     {
       _id: 'plan-basic',
       name: 'Basic Surveillance',
-      price: 9.99,
+      price: 499,
       currency: 'INR',
       billingCycle: 'monthly',
       features: [
@@ -56,7 +56,7 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
     {
       _id: 'plan-premium',
       name: 'Premium Protection',
-      price: 19.99,
+      price: 999,
       currency: 'INR',
       billingCycle: 'monthly',
       isPopular: true,
@@ -71,7 +71,7 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
     {
       _id: 'plan-ai-pro',
       name: 'AI-Pro Security',
-      price: 39.99,
+      price: 1999,
       currency: 'INR',
       billingCycle: 'monthly',
       features: [

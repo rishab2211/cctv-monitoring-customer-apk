@@ -92,8 +92,8 @@ export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     year: 'numeric',
   });
 
-  const subtotal = invoice.subtotal || invoice.amount * 0.82;
-  const tax = invoice.tax || invoice.amount * 0.18;
+  const subtotal = invoice.subtotal || invoice.amount / 1.18;
+  const tax = invoice.tax || invoice.amount - subtotal;
 
   return (
     <View style={styles.container}>
