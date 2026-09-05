@@ -1,5 +1,23 @@
 require('react-native-gesture-handler/jestSetup');
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'));
+jest.mock('react-native-reanimated', () => {
+  try {
+    const { ReanimatedModule } = require('react-native-reanimated/src/ReanimatedModule');
+    if (ReanimatedModule) {
+      ReanimatedModule.setCSSEventHandler = () => {};
+    }
+    const { createJSReanimatedModule } = require('react-native-reanimated/src/ReanimatedModule/js-reanimated');
+    if (createJSReanimatedModule) {
+      const instance = createJSReanimatedModule();
+      if (instance) {
+        Object.getPrototypeOf(instance).setCSSEventHandler = () => {};
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return require('react-native-reanimated/mock');
+});
 
 jest.mock('@hugeicons/react-native', () => ({
   HugeiconsIcon: () => 'HugeiconsIcon',
