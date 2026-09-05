@@ -15,8 +15,15 @@ import uiReducer, { setRateLimitCountdown } from './slices/uiSlice';
 import { baseApi } from '../api/rtk-query/baseApi';
 import { setAuthCallbacks } from '../api/axiosInstance';
 
+// Exclude sensitive JWT tokens from AsyncStorage. Keychain is the sole token authority.
+const authPersistConfig = {
+  key: 'cctv_customer_auth',
+  storage: AsyncStorage,
+  blacklist: ['token', 'refreshToken'],
+};
+
 const appReducer = combineReducers({
-  auth: authReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
   ui: uiReducer,
   [baseApi.reducerPath]: baseApi.reducer,
 });
@@ -24,22 +31,13 @@ const appReducer = combineReducers({
 // Root reducer that completely resets state and cache on logout
 const rootReducer = (state: any, action: AnyAction) => {
   if (action.type === 'auth/logout') {
-    // Reset state to initial state on logout to prevent data leaking
     state = undefined;
   }
   return appReducer(state, action);
 };
 
-const persistConfig = {
-  key: 'cctv_customer_root',
-  storage: AsyncStorage,
-  whitelist: ['auth'], // Only persist auth state across reloads
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

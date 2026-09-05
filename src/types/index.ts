@@ -32,6 +32,8 @@ export interface AuthTokens {
   refreshToken: string;
 }
 
+export type SubscriptionStatus = 'active' | 'past_due' | 'canceled' | 'pending_payment' | 'expired';
+
 export interface Subscription {
   _id: string;
   customerId: string;
@@ -42,7 +44,7 @@ export interface Subscription {
     billingCycle: string;
     features?: string[];
   };
-  status: 'active' | 'past_due' | 'canceled' | 'pending_payment' | 'expired';
+  status: SubscriptionStatus;
   startDate: string;
   endDate: string;
   amount: number;

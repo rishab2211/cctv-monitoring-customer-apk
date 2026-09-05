@@ -40,6 +40,14 @@ export const cameraApi = baseApi.injectEndpoints({
       providesTags: ['Cameras'],
     }),
 
+    getCameraDetail: builder.query<ApiResponse<{ camera: Camera }>, string>({
+      query: (cameraId) => ({
+        url: `/customer/cameras/${cameraId}`,
+        method: 'GET',
+      }),
+      providesTags: (_result, _error, id) => [{ type: 'Cameras', id }],
+    }),
+
     getCameraLiveInfo: builder.query<ApiResponse<LiveStreamInfo>, string>({
       query: (cameraId) => ({
         url: `/customer/cameras/${cameraId}/live`,
@@ -108,6 +116,8 @@ export const cameraApi = baseApi.injectEndpoints({
 export const {
   useGetCamerasQuery,
   useLazyGetCamerasQuery,
+  useGetCameraDetailQuery,
+  useLazyGetCameraDetailQuery,
   useGetCameraLiveInfoQuery,
   useLazyGetCameraLiveInfoQuery,
   usePostWebRTCOfferMutation,
