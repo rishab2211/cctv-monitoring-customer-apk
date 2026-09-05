@@ -93,10 +93,10 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
             icon={InformationCircleIcon}
             size={18}
             color={COLORS.infoBlue}
-            style={{ marginRight: SPACING.sm, marginTop: 1 }}
+            style={styles.noticeIcon}
           />
           <Text style={styles.noticeText}>
-            <Text style={{ fontWeight: '700' }}>Note:</Text> Shared recipients must have a registered account and an active subscription to watch live streams.
+            <Text style={styles.boldText}>Note:</Text> Shared recipients must have a registered account and an active subscription to watch live streams.
           </Text>
         </View>
 
@@ -275,4 +275,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  noticeIcon: {
+    marginRight: SPACING.sm,
+    marginTop: 1,
+  },
+  boldText: {
+    fontWeight: '700',
+  },
 });
+

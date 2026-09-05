@@ -15,7 +15,6 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import {
   Invoice01Icon,
   Download01Icon,
-  ArrowRight01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -112,7 +111,7 @@ export const InvoiceListScreen: React.FC<Props> = ({ navigation }) => {
             <View style={styles.iconCircle}>
               <HugeIcon icon={Invoice01Icon} size={18} color={COLORS.primary} />
             </View>
-            <View style={{ marginLeft: SPACING.sm }}>
+            <View style={styles.invoiceMeta}>
               <Text style={styles.invoiceNumber}>
                 #{invoice.invoiceNumber || invoice._id.slice(-8).toUpperCase()}
               </Text>
@@ -231,6 +230,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  invoiceMeta: {
+    marginLeft: SPACING.sm,
   },
   invoiceNumber: {
     fontSize: 14,

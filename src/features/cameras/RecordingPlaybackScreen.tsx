@@ -117,10 +117,15 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
             {isLoading ? (
               <ActivityIndicator size="large" color={COLORS.primary} />
             ) : (
-              <>
-                <HugeIcon icon={Film01Icon} size={48} color={COLORS.textMuted} style={{ marginBottom: SPACING.xs }} />
+              <View style={styles.emptyVideoBox}>
+                <HugeIcon
+                  icon={Film01Icon}
+                  size={48}
+                  color={COLORS.textMuted}
+                  style={styles.emptyIcon}
+                />
                 <Text style={styles.emptyVideoText}>No recordings found for this period</Text>
-              </>
+              </View>
             )}
           </View>
         )}
@@ -141,7 +146,7 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
                 icon={isPlaying ? PauseIcon : PlayIcon}
                 size={20}
                 color={COLORS.textInverse}
-                style={{ marginLeft: isPlaying ? 0 : 2 }}
+                style={isPlaying ? undefined : styles.playIconOffset}
               />
             </TouchableOpacity>
 
@@ -189,7 +194,7 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
                   <HugeIcon icon={Film01Icon} size={20} color={COLORS.primary} />
                 </View>
 
-                <View style={{ flex: 1, marginLeft: SPACING.md }}>
+                <View style={styles.chunkInfoCol}>
                   <Text style={[styles.chunkTime, isSelected && styles.chunkTimeSelected]}>
                     {startStr} – {endStr}
                   </Text>
@@ -213,7 +218,12 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
           })
         ) : (
           <View style={styles.noChunksBox}>
-            <HugeIcon icon={Clock01Icon} size={36} color={COLORS.textMuted} style={{ marginBottom: SPACING.sm }} />
+            <HugeIcon
+              icon={Clock01Icon}
+              size={36}
+              color={COLORS.textMuted}
+              style={styles.noChunksIconBox}
+            />
             <Text style={styles.noChunksTitle}>No Recorded Footage</Text>
             <Text style={styles.noChunksDesc}>
               Continuous recording activates automatically when your CCTV camera is online.
@@ -398,4 +408,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
   },
+  playIconOffset: {
+    marginLeft: 2,
+  },
+  chunkInfoCol: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
+  emptyIcon: {
+    marginBottom: SPACING.xs,
+  },
+  noChunksIconBox: {
+    marginBottom: SPACING.sm,
+  },
 });
+

@@ -118,7 +118,7 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
         {/* Top Camera Header Card */}
         <View style={styles.card}>
           <View style={styles.headerRow}>
-            <View style={{ flex: 1, marginRight: SPACING.sm }}>
+            <View style={styles.headerInfo}>
               <Text style={styles.cameraName}>{camera.name}</Text>
               <Text style={styles.serialText}>SN: {camera.serialNumber || camera._id}</Text>
             </View>
@@ -223,7 +223,7 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             {camera.sharedWith && camera.sharedWith.length > 0 ? (
               camera.sharedWith.map((shared) => (
                 <View key={shared.userId} style={styles.sharedUserRow}>
-                  <View style={{ flex: 1 }}>
+                  <View style={styles.sharedUserInfo}>
                     <Text style={styles.sharedEmail}>{shared.email}</Text>
                     <Text style={styles.sharedDate}>
                       Shared {new Date(shared.sharedAt).toLocaleDateString()}
@@ -481,4 +481,12 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     lineHeight: 18,
   },
+  headerInfo: {
+    flex: 1,
+    marginRight: SPACING.sm,
+  },
+  sharedUserInfo: {
+    flex: 1,
+  },
 });
+

@@ -28,7 +28,10 @@ type FilterType = 'all' | 'open' | 'in_progress' | 'resolved' | 'closed';
 export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const { data: ticketsResponse, isLoading, isFetching, refetch } = useGetTicketsQuery();
-  const tickets = ticketsResponse?.data?.tickets || [];
+  const tickets = useMemo(
+    () => ticketsResponse?.data?.tickets || [],
+    [ticketsResponse?.data?.tickets]
+  );
 
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
@@ -122,7 +125,7 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
             <View style={styles.iconCircle}>
               <HugeIcon icon={CustomerSupportIcon} size={18} color={COLORS.primary} />
             </View>
-            <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
+            <View style={styles.ticketHeaderInfo}>
               <Text style={styles.ticketTitle} numberOfLines={1}>
                 {ticket.title}
               </Text>
@@ -333,6 +336,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  ticketHeaderInfo: {
+    marginLeft: SPACING.sm,
+    flex: 1,
   },
   ticketTitle: {
     fontSize: 15,

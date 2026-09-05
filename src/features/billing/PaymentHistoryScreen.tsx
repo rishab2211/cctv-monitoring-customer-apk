@@ -10,9 +10,6 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   CreditCardIcon,
-  CheckmarkCircle01Icon,
-  Cancel01Icon,
-  Clock01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -63,7 +60,7 @@ export const PaymentHistoryScreen: React.FC<Props> = () => {
             <View style={styles.iconCircle}>
               <HugeIcon icon={CreditCardIcon} size={18} color={COLORS.primary} />
             </View>
-            <View style={{ marginLeft: SPACING.sm }}>
+            <View style={styles.paymentMeta}>
               <Text style={styles.paymentId}>
                 {payment.paymentId || `PAY-${payment._id.slice(-8).toUpperCase()}`}
               </Text>
@@ -79,7 +76,7 @@ export const PaymentHistoryScreen: React.FC<Props> = () => {
             <Text style={styles.orderValue}>{payment.orderId || 'Direct Payment'}</Text>
           </View>
 
-          <View style={{ alignItems: 'flex-end' }}>
+          <View style={styles.amountContainer}>
             <Text style={styles.amountLabel}>Amount Paid</Text>
             <Text style={styles.amountValue}>₹{payment.amount}</Text>
           </View>
@@ -180,6 +177,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  paymentMeta: {
+    marginLeft: SPACING.sm,
+  },
   paymentId: {
     fontSize: 14,
     fontWeight: '700',
@@ -247,6 +247,9 @@ const styles = StyleSheet.create({
   amountLabel: {
     ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
+  },
+  amountContainer: {
+    alignItems: 'flex-end',
   },
   amountValue: {
     fontSize: 16,

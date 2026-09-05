@@ -18,7 +18,6 @@ import {
   Shield01Icon,
   CustomerSupportIcon,
   Invoice01Icon,
-  Settings01Icon,
   LockIcon,
   SmartPhone01Icon,
   InformationCircleIcon,
@@ -89,7 +88,7 @@ export const ProfileScreen: React.FC = () => {
           <View style={styles.franchiseIconBox}>
             <HugeIcon icon={CustomerSupportIcon} size={20} color={COLORS.primary} />
           </View>
-          <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+          <View style={styles.franchiseContent}>
             <Text style={styles.franchiseLabel}>Assigned Franchise Support</Text>
             <Text style={styles.franchiseName}>{user.franchiseId.name}</Text>
             {user.franchiseId.phone ? (
@@ -364,6 +363,10 @@ const styles = StyleSheet.create({
     backgroundColor: `${COLORS.primary}15`,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  franchiseContent: {
+    flex: 1,
+    marginLeft: SPACING.sm,
   },
   franchiseLabel: {
     ...TYPOGRAPHY.caption,

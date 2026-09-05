@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,14 +12,9 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
-  CreditCardIcon,
-  StarIcon,
   Invoice01Icon,
   Clock01Icon,
   ArrowRight01Icon,
-  AlertCircleIcon,
-  CheckmarkCircle01Icon,
-  Shield01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -108,7 +103,7 @@ export const BillingScreen: React.FC = () => {
             {/* Active Subscription Overview Card */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <View style={{ flex: 1 }}>
+                <View style={styles.planHeaderInfo}>
                   <Text style={styles.planLabel}>ACTIVE SURVEILLANCE PLAN</Text>
                   <Text style={styles.planName}>{planName}</Text>
                 </View>
@@ -396,4 +391,8 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     marginTop: SPACING.md,
   },
+  planHeaderInfo: {
+    flex: 1,
+  },
 });
+

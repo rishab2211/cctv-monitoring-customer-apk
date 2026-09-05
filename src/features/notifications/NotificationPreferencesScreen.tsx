@@ -84,7 +84,7 @@ export const NotificationPreferencesScreen: React.FC<Props> = () => {
 
         {/* Channels Header Icons */}
         <View style={styles.channelHeaderRow}>
-          <View style={{ flex: 1 }} />
+          <View style={styles.channelHeaderSpacer} />
           <View style={styles.channelHeaderCol}>
             <HugeIcon icon={SmartPhone01Icon} size={16} color={COLORS.textSecondary} />
             <Text style={styles.channelHeaderText}>Push</Text>
@@ -102,10 +102,10 @@ export const NotificationPreferencesScreen: React.FC<Props> = () => {
         {/* Row 1: Security Alerts */}
         <View style={styles.row}>
           <View style={styles.categoryInfo}>
-            <View style={[styles.iconBox, { backgroundColor: `${COLORS.error}15` }]}>
+            <View style={[styles.iconBox, styles.iconBoxError]}>
               <HugeIcon icon={AlertCircleIcon} size={18} color={COLORS.error} />
             </View>
-            <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+            <View style={styles.categoryTextContainer}>
               <Text style={styles.categoryTitle}>Security Alerts</Text>
               <Text style={styles.categoryDesc}>SOS triggers, AI motion alerts, camera offline notices</Text>
             </View>
@@ -144,10 +144,10 @@ export const NotificationPreferencesScreen: React.FC<Props> = () => {
         {/* Row 2: System & Account Notices */}
         <View style={styles.row}>
           <View style={styles.categoryInfo}>
-            <View style={[styles.iconBox, { backgroundColor: `${COLORS.secondary}15` }]}>
+            <View style={[styles.iconBox, styles.iconBoxSecondary]}>
               <HugeIcon icon={Settings01Icon} size={18} color={COLORS.secondary} />
             </View>
-            <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+            <View style={styles.categoryTextContainer}>
               <Text style={styles.categoryTitle}>System & Billing</Text>
               <Text style={styles.categoryDesc}>Invoices, plan renewals, ticket replies, maintenance</Text>
             </View>
@@ -248,6 +248,9 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
     marginBottom: SPACING.md,
   },
+  channelHeaderSpacer: {
+    flex: 1,
+  },
   channelHeaderCol: {
     width: 60,
     alignItems: 'center',
@@ -267,12 +270,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.sm,
   },
+  categoryTextContainer: {
+    flex: 1,
+    marginLeft: SPACING.sm,
+  },
   iconBox: {
     width: 34,
     height: 34,
     borderRadius: 17,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  iconBoxError: {
+    backgroundColor: `${COLORS.error}15`,
+  },
+  iconBoxSecondary: {
+    backgroundColor: `${COLORS.secondary}15`,
   },
   categoryTitle: {
     ...TYPOGRAPHY.subtitle2,

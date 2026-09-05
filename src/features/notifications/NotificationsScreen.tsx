@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,7 +18,6 @@ import {
   CheckmarkCircle01Icon,
   Delete02Icon,
   CheckmarkSquare01Icon,
-  ArrowRight01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -35,7 +34,7 @@ import { EmptyState } from '../../components/EmptyState';
 type Props = NativeStackScreenProps<RootStackParamList, 'Notifications'>;
 
 export const NotificationsScreen: React.FC<Props> = ({ navigation }) => {
-  const [page, setPage] = useState(1);
+  const page = 1;
   const {
     data: notifsResponse,
     isLoading,
@@ -67,7 +66,7 @@ export const NotificationsScreen: React.FC<Props> = ({ navigation }) => {
     if (!notif.isRead) {
       try {
         await markReadMutation(notif._id).unwrap();
-      } catch (e) {
+      } catch {
         // silent fail on mark read
       }
     }

@@ -6,6 +6,15 @@ export const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [`${CONFIG.APP_SCHEME}://`, 'https://app.cctvcustomer.com'],
   config: {
     screens: {
+      AuthStack: {
+        screens: {
+          Login: 'login',
+          SignUp: 'signup',
+          ForgotPassword: 'forgot-password',
+          OTPVerification: 'verify-otp',
+          ResetPassword: 'reset-password/:resetToken',
+        },
+      },
       MainTabs: {
         screens: {
           TabHome: 'dashboard',
@@ -18,6 +27,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       CameraDetail: 'cameras/:cameraId',
       LiveView: 'cameras/:cameraId/live',
       RecordingPlayback: 'cameras/:cameraId/playback',
+      ShareCamera: 'cameras/:cameraId/share',
       PlanSelection: 'billing/plans',
       Payment: 'billing/payment',
       InvoiceList: 'billing/invoices',

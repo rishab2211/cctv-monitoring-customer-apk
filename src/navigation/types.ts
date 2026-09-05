@@ -40,7 +40,6 @@ export type RootStackParamList = {
   // Billing
   PlanSelection: undefined;
   Payment: { planId: string; amount: number; subscriptionId?: string };
-  SubscriptionDetail: undefined;
   InvoiceList: undefined;
   InvoiceDetail: { invoiceId: string };
   PaymentHistory: undefined;

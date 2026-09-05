@@ -13,7 +13,6 @@ import {
   SirenIcon,
   Location01Icon,
   CctvCameraIcon,
-  Clock01Icon,
   ArrowRight01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
@@ -32,7 +31,10 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
   const { data: historyResponse, isLoading, isFetching, refetch } = useGetSOSHistoryQuery();
   const { data: camerasResponse } = useGetCamerasQuery();
 
-  const alerts = historyResponse?.data?.alerts || [];
+  const alerts = useMemo(
+    () => historyResponse?.data?.alerts || [],
+    [historyResponse?.data?.alerts]
+  );
   const cameras = camerasResponse?.data?.cameras || [];
 
   const filteredAlerts = useMemo(() => {
@@ -109,7 +111,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
                 color={alert.status === 'active' ? COLORS.sosRed : COLORS.textMuted}
               />
             </View>
-            <View style={{ marginLeft: SPACING.sm }}>
+            <View style={styles.alertMeta}>
               <Text style={styles.dateText}>{formattedDate}</Text>
               <Text style={styles.idText}>ID: #{alert._id.slice(-6).toUpperCase()}</Text>
             </View>
@@ -308,6 +310,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  alertMeta: {
+    marginLeft: SPACING.sm,
   },
   dateText: {
     fontSize: 14,

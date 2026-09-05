@@ -17,7 +17,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
   UserIcon,
-  CallIcon,
   Location01Icon,
   AlertCircleIcon,
   FloppyDiskIcon,
@@ -169,7 +168,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoid}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
@@ -260,7 +259,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
           </View>
 
           <View style={styles.rowFields}>
-            <View style={{ flex: 1, marginRight: SPACING.sm }}>
+            <View style={styles.halfFieldLeft}>
               <Text style={styles.label}>Phone Number</Text>
               <Controller
                 control={control}
@@ -283,7 +282,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
               ) : null}
             </View>
 
-            <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+            <View style={styles.halfFieldRight}>
               <Text style={styles.label}>Relationship</Text>
               <Controller
                 control={control}
@@ -331,7 +330,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
           </View>
 
           <View style={styles.rowFields}>
-            <View style={{ flex: 1, marginRight: SPACING.sm }}>
+            <View style={styles.halfFieldLeft}>
               <Text style={styles.label}>City</Text>
               <Controller
                 control={control}
@@ -350,7 +349,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
               />
             </View>
 
-            <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+            <View style={styles.halfFieldRight}>
               <Text style={styles.label}>Pincode</Text>
               <Controller
                 control={control}
@@ -443,6 +442,17 @@ const styles = StyleSheet.create({
   },
   fieldGroup: {
     marginBottom: SPACING.md,
+  },
+  keyboardAvoid: {
+    flex: 1,
+  },
+  halfFieldLeft: {
+    flex: 1,
+    marginRight: SPACING.sm,
+  },
+  halfFieldRight: {
+    flex: 1,
+    marginLeft: SPACING.sm,
   },
   rowFields: {
     flexDirection: 'row',

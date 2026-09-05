@@ -102,7 +102,7 @@ export const ChangePasswordScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoid}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
@@ -341,6 +341,9 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     marginBottom: SPACING.lg,
     lineHeight: 16,
+  },
+  keyboardAvoid: {
+    flex: 1,
   },
   fieldGroup: {
     marginBottom: SPACING.md,

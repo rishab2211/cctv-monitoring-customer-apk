@@ -19,7 +19,7 @@ import {
 } from 'react-native-webrtc';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
-import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 import {
   WifiDisconnected01Icon,
   Cancel01Icon,
@@ -169,7 +169,9 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
       if (pcRef.current) {
         try {
           pcRef.current.close();
-        } catch (e) {}
+        } catch {
+          // Ignore close error on unmount
+        }
         pcRef.current = null;
       }
     };
@@ -220,7 +222,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
                 </View>
               ) : (
                 <View style={styles.errorBox}>
-                  <HugeIcon icon={WifiDisconnected01Icon} size={48} color={COLORS.warningAmber} style={{ marginBottom: SPACING.md }} />
+                  <HugeIcon icon={WifiDisconnected01Icon} size={48} color={COLORS.warningAmber} style={styles.warningIcon} />
                   <Text style={styles.errorTitle}>Stream Standby / Offline</Text>
                   <Text style={styles.errorDesc}>
                     Unable to connect live frames. The camera unit may be offline or MediaMTX is restarting.
@@ -239,29 +241,32 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
               <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
                 <HugeIcon icon={Cancel01Icon} size={18} color="#FFFFFF" />
               </TouchableOpacity>
-
               <View style={styles.cameraTitleContainer}>
                 <Text style={styles.cameraTitleText} numberOfLines={1}>
                   {cameraName}
                 </Text>
-              </View>
-
-              <View
-                style={[
-                  styles.livePill,
-                  streamStatus === 'connected' ? styles.livePillGreen : styles.livePillAmber,
-                ]}
-              >
                 <View
                   style={[
-                    styles.liveDot,
-                    streamStatus === 'connected' ? styles.liveDotGreen : styles.liveDotAmber,
+                    styles.livePill,
+                    streamStatus === 'connected'
+                      ? styles.livePillGreen
+                      : styles.livePillAmber,
                   ]}
-                />
-                <Text style={styles.livePillText}>
-                  {streamStatus === 'connected' ? 'LIVE' : streamStatus.toUpperCase()}
-                </Text>
+                >
+                  <View
+                    style={[
+                      styles.liveDot,
+                      streamStatus === 'connected'
+                        ? styles.liveDotGreen
+                        : styles.liveDotAmber,
+                    ]}
+                  />
+                  <Text style={styles.livePillText}>
+                    {streamStatus === 'connected' ? 'LIVE' : streamStatus.toUpperCase()}
+                  </Text>
+                </View>
               </View>
+              <View style={styles.closeButtonPlaceholder} />
             </View>
           ) : null}
 
@@ -276,13 +281,13 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
                   icon={isMuted ? VolumeOffIcon : VolumeHighIcon}
                   size={22}
                   color="#FFFFFF"
-                  style={{ marginBottom: 4 }}
+                  style={styles.controlIcon}
                 />
                 <Text style={styles.controlLabel}>{isMuted ? 'Muted' : 'Audio'}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.controlBtn} onPress={handleSnapshot}>
-                <HugeIcon icon={Camera01Icon} size={22} color="#FFFFFF" style={{ marginBottom: 4 }} />
+                <HugeIcon icon={Camera01Icon} size={22} color="#FFFFFF" style={styles.controlIcon} />
                 <Text style={styles.controlLabel}>Snapshot</Text>
               </TouchableOpacity>
 
@@ -292,7 +297,7 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
                   navigation.navigate('RecordingPlayback', { cameraId, cameraName })
                 }
               >
-                <HugeIcon icon={Clock01Icon} size={22} color="#FFFFFF" style={{ marginBottom: 4 }} />
+                <HugeIcon icon={Clock01Icon} size={22} color="#FFFFFF" style={styles.controlIcon} />
                 <Text style={styles.controlLabel}>Playback</Text>
               </TouchableOpacity>
             </View>
@@ -408,6 +413,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  closeButtonPlaceholder: {
+    width: 36,
+    height: 36,
+  },
   cameraTitleContainer: {
     flex: 1,
     marginHorizontal: SPACING.md,
@@ -475,6 +484,9 @@ const styles = StyleSheet.create({
   controlIcon: {
     fontSize: 22,
     marginBottom: 2,
+  },
+  warningIcon: {
+    marginBottom: SPACING.md,
   },
   controlLabel: {
     color: '#FFFFFF',

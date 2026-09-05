@@ -14,8 +14,6 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import {
   Invoice01Icon,
   Download01Icon,
-  CheckmarkCircle01Icon,
-  Clock01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -28,7 +26,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'InvoiceDetail'>;
 
 export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const { invoiceId } = route.params;
-  const { data: invoiceResponse, isLoading, refetch } = useGetInvoiceDetailQuery(invoiceId);
+  const { data: invoiceResponse, isLoading } = useGetInvoiceDetailQuery(invoiceId);
   const invoice = (invoiceResponse?.data as any)?.invoice || invoiceResponse?.data;
 
   const handleDownload = async () => {
@@ -39,16 +37,14 @@ export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       const { dirs } = ReactNativeBlobUtil.fs;
       const path = `${dirs.DocumentDir}/Invoice_${invoice.invoiceNumber || invoice._id}.pdf`;
 
-      Alert.alert('Downloading Invoice', 'Preparing invoice PDF receipt...');
-
-      await ReactNativeBlobUtil.config({
+      const res = await ReactNativeBlobUtil.config({
         fileCache: true,
         path,
       }).fetch('GET', downloadUrl, {
         Authorization: `Bearer ${token}`,
       });
 
-      Alert.alert('Invoice Downloaded', 'Saved to documents.', [
+      Alert.alert('Download Complete', `Invoice saved to ${res.path()}`, [
         { text: 'OK' },
         {
           text: 'Open PDF',
@@ -61,7 +57,7 @@ export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           },
         },
       ]);
-    } catch (err) {
+    } catch {
       Alert.alert('Error', 'Failed to download invoice PDF');
     }
   };
@@ -126,7 +122,7 @@ export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           {/* Line Items */}
           <Text style={styles.sectionTitle}>Itemized Statement</Text>
           <View style={styles.lineItemRow}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.lineItemInfo}>
               <Text style={styles.lineItemTitle}>CCTV Cloud Security Plan (Monthly)</Text>
               <Text style={styles.lineItemDesc}>Cloud storage, AI motion detection & live streams</Text>
             </View>
@@ -134,7 +130,7 @@ export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
 
           <View style={styles.lineItemRow}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.lineItemInfo}>
               <Text style={styles.lineItemTitle}>GST / Sales Tax (18%)</Text>
               <Text style={styles.lineItemDesc}>Government applicable statutory taxes</Text>
             </View>
@@ -318,4 +314,8 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontWeight: '700',
   },
+  lineItemInfo: {
+    flex: 1,
+  },
 });
+

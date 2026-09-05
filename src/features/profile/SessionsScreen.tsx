@@ -179,7 +179,7 @@ export const SessionsScreen: React.FC<Props> = () => {
         <View style={styles.headerIconCircle}>
           <HugeIcon icon={Shield01Icon} size={24} color={COLORS.primary} />
         </View>
-        <View style={{ flex: 1, marginLeft: SPACING.md }}>
+        <View style={styles.headerTextBox}>
           <Text style={styles.headerTitle}>Active Device Sessions</Text>
           <Text style={styles.headerSubtext}>
             Manage and revoke access from phones, tablets, and computers logged into your account.
@@ -263,6 +263,10 @@ const styles = StyleSheet.create({
     backgroundColor: `${COLORS.primary}15`,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  headerTextBox: {
+    flex: 1,
+    marginLeft: SPACING.md,
   },
   headerTitle: {
     ...TYPOGRAPHY.h3,

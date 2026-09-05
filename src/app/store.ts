@@ -1,4 +1,4 @@
-import { configureStore, combineReducers, AnyAction } from '@reduxjs/toolkit';
+import { configureStore, combineReducers, UnknownAction } from '@reduxjs/toolkit';
 import {
   persistStore,
   persistReducer,
@@ -29,7 +29,7 @@ const appReducer = combineReducers({
 });
 
 // Root reducer that completely resets state and cache on logout
-const rootReducer = (state: any, action: AnyAction) => {
+const rootReducer = (state: any, action: UnknownAction) => {
   if (action.type === 'auth/logout') {
     state = undefined;
   }

@@ -10,9 +10,7 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
-  AlertCircleIcon,
   CctvCameraIcon,
-  Clock01Icon,
   ArrowRight01Icon,
   Shield01Icon,
   PlusSignIcon,
@@ -33,7 +31,10 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 
   const { data: incidentsResponse, isLoading, isFetching, refetch } = useGetIncidentsQuery();
-  const incidents = incidentsResponse?.data?.incidents || [];
+  const incidents = useMemo(
+    () => incidentsResponse?.data?.incidents || [],
+    [incidentsResponse?.data?.incidents]
+  );
 
   const filteredIncidents = useMemo(() => {
     return incidents.filter((incident) => {
@@ -132,7 +133,7 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.iconCircle}>
               <HugeIcon icon={Shield01Icon} size={18} color={COLORS.primary} />
             </View>
-            <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
+            <View style={styles.incidentMeta}>
               <Text style={styles.incidentTitle} numberOfLines={1}>
                 {incident.title}
               </Text>
@@ -149,7 +150,7 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
 
         <View style={styles.badgesRow}>
           {renderStatusBadge(incident.status)}
-          <View style={{ width: SPACING.xs }} />
+          <View style={styles.badgeSpacer} />
           {renderSeverityBadge(incident.severity)}
           {cameraName ? (
             <View style={styles.cameraTag}>
@@ -349,6 +350,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  incidentMeta: {
+    marginLeft: SPACING.sm,
+    flex: 1,
+  },
+  badgeSpacer: {
+    width: SPACING.xs,
   },
   incidentTitle: {
     fontSize: 15,

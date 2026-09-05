@@ -17,6 +17,22 @@ import { COLORS } from '../constants/theme';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+const HomeTabBarIcon = ({ color }: { color: string }) => (
+  <HugeIcon icon={Home01Icon} size={22} color={color} strokeWidth={1.8} />
+);
+
+const CamerasTabBarIcon = ({ color }: { color: string }) => (
+  <HugeIcon icon={CctvCameraIcon} size={22} color={color} strokeWidth={1.8} />
+);
+
+const BillingTabBarIcon = ({ color }: { color: string }) => (
+  <HugeIcon icon={CreditCardIcon} size={22} color={color} strokeWidth={1.8} />
+);
+
+const ProfileTabBarIcon = ({ color }: { color: string }) => (
+  <HugeIcon icon={UserIcon} size={22} color={color} strokeWidth={1.8} />
+);
+
 export const MainTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -52,9 +68,7 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <HugeIcon icon={Home01Icon} size={22} color={color} strokeWidth={1.8} />
-          ),
+          tabBarIcon: HomeTabBarIcon,
         }}
       />
       <Tab.Screen
@@ -63,9 +77,7 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Cameras',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <HugeIcon icon={CctvCameraIcon} size={22} color={color} strokeWidth={1.8} />
-          ),
+          tabBarIcon: CamerasTabBarIcon,
         }}
       />
       <Tab.Screen
@@ -74,9 +86,7 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Billing',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <HugeIcon icon={CreditCardIcon} size={22} color={color} strokeWidth={1.8} />
-          ),
+          tabBarIcon: BillingTabBarIcon,
         }}
       />
       <Tab.Screen
@@ -85,9 +95,7 @@ export const MainTabNavigator: React.FC = () => {
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <HugeIcon icon={UserIcon} size={22} color={color} strokeWidth={1.8} />
-          ),
+          tabBarIcon: ProfileTabBarIcon,
         }}
       />
     </Tab.Navigator>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,7 +15,6 @@ import {
   CheckmarkCircle01Icon,
   AlertCircleIcon,
   ArrowRight01Icon,
-  Shield01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -74,7 +73,7 @@ export const PaymentScreen: React.FC<Props> = ({ navigation, route }) => {
 
       // 2. Launch Razorpay Native SDK Checkout
       const options = {
-        description: 'CCTV Security Cloud Subscription',
+        description: `CCTV Security Cloud Subscription (${planId})`,
         image: 'https://cdn-icons-png.flaticon.com/512/3670/3670157.png',
         currency: 'INR',
         key: keyId,
@@ -141,7 +140,9 @@ export const PaymentScreen: React.FC<Props> = ({ navigation, route }) => {
                       razorpay_payment_id: mockPayId,
                       razorpay_signature: 'dev_mock_signature',
                     }).unwrap();
-                  } catch (e) {}
+                  } catch {
+                    // Fallback in dev sandbox
+                  }
 
                   setReceiptData({
                     paymentId: mockPayId,

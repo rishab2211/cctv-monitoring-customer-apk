@@ -34,7 +34,6 @@ export const ROUTES = {
   // Billing Module
   PLAN_SELECTION: 'PlanSelection',
   PAYMENT: 'Payment',
-  SUBSCRIPTION_DETAIL: 'SubscriptionDetail',
   INVOICE_LIST: 'InvoiceList',
   INVOICE_DETAIL: 'InvoiceDetail',
   PAYMENT_HISTORY: 'PaymentHistory',

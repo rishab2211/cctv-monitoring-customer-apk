@@ -15,14 +15,12 @@ import {
   Shield01Icon,
   CctvCameraIcon,
   PlayIcon,
-  Clock01Icon,
-  Comment01Icon,
   SentIcon,
   UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
-import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 import {
   useGetIncidentDetailQuery,
   useGetIncidentTimelineQuery,
@@ -50,7 +48,6 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
 
   const {
     data: timelineResponse,
-    isLoading: isLoadingTimeline,
     refetch: refetchTimeline,
   } = useGetIncidentTimelineQuery(incidentId);
 
@@ -149,7 +146,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
             <View style={styles.iconCircle}>
               <HugeIcon icon={Shield01Icon} size={22} color={COLORS.primary} />
             </View>
-            <View style={{ flex: 1, marginLeft: SPACING.md }}>
+            <View style={styles.headerTextContainer}>
               <Text style={styles.title}>{incident.title}</Text>
               <Text style={styles.reportDate}>Reported: {formattedDate}</Text>
             </View>
@@ -202,7 +199,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
               <View style={styles.cameraIconBox}>
                 <HugeIcon icon={CctvCameraIcon} size={22} color={COLORS.primary} />
               </View>
-              <View style={{ flex: 1, marginLeft: SPACING.md }}>
+              <View style={styles.cameraInfo}>
                 <Text style={styles.cameraName}>{cameraObj.name}</Text>
                 <Text style={styles.cameraSerial}>
                   SN: {cameraObj.serialNumber || cameraObj._id}
@@ -307,7 +304,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
             {timeline.map((item: any) => (
               <View key={item._id} style={styles.timelineRow}>
                 <View style={styles.timelineDot} />
-                <View style={{ flex: 1, marginLeft: SPACING.md }}>
+                <View style={styles.timelineContent}>
                   <Text style={styles.timelineAction}>{(item.action || 'UPDATE').toUpperCase()}</Text>
                   <Text style={styles.timelineTime}>
                     {new Date(item.timestamp || Date.now()).toLocaleString()} • {item.performedBy?.name || 'System'}
@@ -358,6 +355,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerTextContainer: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
+  cameraInfo: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
+  timelineContent: {
+    flex: 1,
+    marginLeft: SPACING.md,
   },
   title: {
     fontSize: 16,

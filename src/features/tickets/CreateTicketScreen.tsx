@@ -16,7 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
-  CustomerSupportIcon,
   AlertCircleIcon,
   Clock01Icon,
 } from '@hugeicons/core-free-icons';
@@ -215,10 +214,8 @@ export const CreateTicketScreen: React.FC<Props> = ({ navigation }) => {
                   <Text
                     style={[
                       styles.priorityChipText,
-                      selectedPriority === pri.key && {
-                        color: pri.color,
-                        fontWeight: '800',
-                      },
+                      selectedPriority === pri.key && styles.priorityChipTextActive,
+                      selectedPriority === pri.key && { color: pri.color },
                     ]}
                   >
                     {pri.label}
@@ -418,6 +415,9 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     fontSize: 12,
     fontWeight: '700',
+  },
+  priorityChipTextActive: {
+    fontWeight: '800',
   },
   submitButton: {
     backgroundColor: COLORS.primary,

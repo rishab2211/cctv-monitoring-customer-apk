@@ -16,10 +16,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
-  Shield01Icon,
   AlertCircleIcon,
   CctvCameraIcon,
-  CheckmarkCircle01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -217,10 +215,8 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
                   <Text
                     style={[
                       styles.severityChipText,
-                      selectedSeverity === sev.key && {
-                        color: sev.color,
-                        fontWeight: '800',
-                      },
+                      selectedSeverity === sev.key && styles.severityChipTextActive,
+                      selectedSeverity === sev.key && { color: sev.color },
                     ]}
                   >
                     {sev.label}
@@ -273,7 +269,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
                           ? COLORS.textInverse
                           : COLORS.textMuted
                       }
-                      style={{ marginRight: 4 }}
+                      style={styles.cameraIcon}
                     />
                     <Text
                       style={[
@@ -463,8 +459,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
+  severityChipTextActive: {
+    fontWeight: '800',
+  },
   camerasRow: {
     paddingVertical: 2,
+  },
+  cameraIcon: {
+    marginRight: 4,
   },
   cameraChip: {
     backgroundColor: COLORS.surfaceElevated,

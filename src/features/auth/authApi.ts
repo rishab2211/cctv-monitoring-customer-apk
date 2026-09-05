@@ -13,24 +13,6 @@ export interface AuthSuccessData {
   tokens: AuthTokensResponse;
 }
 
-export interface SessionItem {
-  _id: string;
-  sessionId: string;
-  deviceName?: string;
-  deviceType?: string;
-  os?: string;
-  browser?: string;
-  ipAddress?: string;
-  isActive: boolean;
-  lastActiveAt?: string;
-  createdAt: string;
-}
-
-export interface SessionsData {
-  currentSessionId?: string;
-  sessions: SessionItem[];
-}
-
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<
@@ -107,50 +89,22 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    changePassword: builder.mutation<
-      ApiResponse<null>,
-      { currentPassword: string; newPassword: string; confirmPassword: string }
-    >({
-      query: (data) => ({
-        url: '/auth/change-password',
-        method: 'PUT',
-        data,
-      }),
-    }),
-
-    getSessions: builder.query<ApiResponse<SessionsData>, void>({
-      query: () => ({
-        url: '/auth/sessions',
-        method: 'GET',
-      }),
-      providesTags: ['Auth'],
-    }),
-
-    revokeSession: builder.mutation<ApiResponse<null>, string>({
-      query: (sessionId) => ({
-        url: `/auth/sessions/${sessionId}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: ['Auth'],
-    }),
-
-    revokeAllSessions: builder.mutation<
-      ApiResponse<{ revokedCount: number }>,
-      void
-    >({
-      query: () => ({
-        url: '/auth/sessions',
-        method: 'DELETE',
-      }),
-      invalidatesTags: ['Auth'],
-    }),
-
     logoutApi: builder.mutation<ApiResponse<null>, void>({
       query: () => ({
         url: '/auth/logout',
         method: 'POST',
       }),
-      invalidatesTags: ['Auth', 'Profile', 'Dashboard', 'Cameras', 'SOS', 'Incidents', 'Billing', 'Tickets', 'Notifications'],
+      invalidatesTags: [
+        'Auth',
+        'Profile',
+        'Dashboard',
+        'Cameras',
+        'SOS',
+        'Incidents',
+        'Billing',
+        'Tickets',
+        'Notifications',
+      ],
     }),
   }),
 });
@@ -162,9 +116,6 @@ export const {
   useForgotPasswordMutation,
   useVerifyOtpMutation,
   useResetPasswordMutation,
-  useChangePasswordMutation,
-  useGetSessionsQuery,
-  useRevokeSessionMutation,
-  useRevokeAllSessionsMutation,
   useLogoutApiMutation,
 } = authApi;
+

@@ -17,7 +17,6 @@ import {
   Call02Icon,
   PlayIcon,
   CheckmarkCircle01Icon,
-  Clock01Icon,
   UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
@@ -45,7 +44,6 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const {
     data: timelineResponse,
-    isLoading: isLoadingTimeline,
     refetch: refetchTimeline,
   } = useGetSOSTimelineQuery(sosId);
 
@@ -152,7 +150,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                 }
               />
             </View>
-            <View style={{ flex: 1, marginLeft: SPACING.md }}>
+            <View style={styles.statusHeroContent}>
               <Text style={styles.statusHeroTitle}>
                 {alert.status === 'active'
                   ? 'EMERGENCY DISPATCH ACTIVE'
@@ -187,7 +185,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <Text style={styles.cardSectionTitle}>Broadcast Location</Text>
           <View style={styles.locationRow}>
             <HugeIcon icon={Location01Icon} size={20} color={COLORS.sosRed} />
-            <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+            <View style={styles.locationContent}>
               <Text style={styles.locationAddress}>
                 {typeof alert.location === 'string'
                   ? alert.location
@@ -210,7 +208,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.cameraIconBox}>
                 <HugeIcon icon={CctvCameraIcon} size={24} color={COLORS.primary} />
               </View>
-              <View style={{ flex: 1, marginLeft: SPACING.md }}>
+              <View style={styles.cameraContent}>
                 <Text style={styles.cameraName}>{cameraObj.name}</Text>
                 <Text style={styles.cameraSerial}>
                   SN: {cameraObj.serialNumber || cameraObj._id}
@@ -287,7 +285,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
 
             {/* Step 3: Resolved */}
-            <View style={[styles.timelineStep, { borderLeftWidth: 0 }]}>
+            <View style={[styles.timelineStep, styles.timelineStepLast]}>
               <View
                 style={[
                   styles.timelineNode,
@@ -396,6 +394,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.md,
   },
+  statusHeroContent: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
   statusIconBox: {
     width: 48,
     height: 48,
@@ -450,6 +452,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
+  locationContent: {
+    flex: 1,
+    marginLeft: SPACING.sm,
+  },
   locationAddress: {
     ...TYPOGRAPHY.bodyMedium,
     color: COLORS.textPrimary,
@@ -472,6 +478,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cameraContent: {
+    flex: 1,
+    marginLeft: SPACING.md,
   },
   cameraName: {
     fontSize: 15,
@@ -507,6 +517,9 @@ const styles = StyleSheet.create({
     paddingLeft: SPACING.lg,
     paddingBottom: SPACING.xl,
     position: 'relative',
+  },
+  timelineStepLast: {
+    borderLeftWidth: 0,
   },
   timelineNode: {
     position: 'absolute',

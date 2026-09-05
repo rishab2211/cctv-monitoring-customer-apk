@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,7 +8,6 @@ import {
   Linking,
   ScrollView,
   Platform,
-  Alert,
   BackHandler,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -276,7 +275,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.infoCard}>
               <View style={styles.infoCardRow}>
                 <HugeIcon icon={Location01Icon} size={18} color={COLORS.sosRed} />
-                <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+                <View style={styles.infoCardContent}>
                   <Text style={styles.infoCardLabel}>BROADCAST LOCATION</Text>
                   <Text style={styles.infoCardValue}>
                     {locationInfo?.address || 'Detecting premises coordinates...'}
@@ -324,7 +323,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
                         icon={CctvCameraIcon}
                         size={14}
                         color={selectedCameraId === cam._id ? '#FFFFFF' : COLORS.textMuted}
-                        style={{ marginRight: 4 }}
+                        style={styles.cameraIcon}
                       />
                       <Text
                         style={[
@@ -504,6 +503,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  infoCardContent: {
+    flex: 1,
+    marginLeft: SPACING.sm,
+  },
   infoCardLabel: {
     ...TYPOGRAPHY.caption,
     color: COLORS.sosRed,
@@ -526,6 +529,9 @@ const styles = StyleSheet.create({
   },
   camerasRow: {
     paddingVertical: SPACING.xs,
+  },
+  cameraIcon: {
+    marginRight: 4,
   },
   cameraChip: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',

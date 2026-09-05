@@ -46,7 +46,8 @@ export const CameraListScreen: React.FC = () => {
   const [paywallVisible, setPaywallVisible] = useState(false);
 
   const { data: camerasResponse, isLoading, isFetching, refetch } = useGetCamerasQuery();
-  const cameras = camerasResponse?.data?.cameras || [];
+  const rawCameras = camerasResponse?.data?.cameras;
+  const cameras = useMemo(() => rawCameras || [], [rawCameras]);
 
   const { canStream, paywallType } = useSubscriptionGuard();
 
@@ -99,13 +100,21 @@ export const CameraListScreen: React.FC = () => {
     }
   };
 
+  const handleShareCamera = (camera: Camera) => {
+    navigation.navigate('ShareCamera', { camera, cameraId: camera._id });
+  };
+
+  const handleCameraDetail = (camera: Camera) => {
+    navigation.navigate('CameraDetail', { camera, cameraId: camera._id });
+  };
+
   const renderCameraCard = ({ item: camera }: { item: Camera }) => {
     const isOwner = camera.isOwner !== false;
 
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <View style={{ flex: 1, marginRight: SPACING.sm }}>
+          <View style={styles.cardHeaderInfo}>
             <View style={styles.titleRow}>
               <Text style={styles.cameraName} numberOfLines={1}>
                 {camera.name}
@@ -134,7 +143,7 @@ export const CameraListScreen: React.FC = () => {
         >
           <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} />
           <View style={styles.playOverlayButton}>
-            <HugeIcon icon={PlayIcon} size={18} color={COLORS.textInverse} style={{ marginLeft: 2 }} />
+            <HugeIcon icon={PlayIcon} size={18} color={COLORS.textInverse} style={styles.playIconOffset} />
           </View>
           <View style={styles.serialBox}>
             <Text style={styles.serialText}>SN: {camera.serialNumber || camera._id.slice(-6)}</Text>
@@ -162,7 +171,7 @@ export const CameraListScreen: React.FC = () => {
           {isOwner ? (
             <TouchableOpacity
               style={[styles.actionBtn, styles.iconBtn]}
-              onPress={() => navigation.navigate('ShareCamera', { camera, cameraId: camera._id })}
+              onPress={() => handleShareCamera(camera)}
             >
               <HugeIcon icon={UserGroupIcon} size={16} color={COLORS.textSecondary} />
             </TouchableOpacity>
@@ -170,7 +179,7 @@ export const CameraListScreen: React.FC = () => {
 
           <TouchableOpacity
             style={[styles.actionBtn, styles.iconBtn]}
-            onPress={() => navigation.navigate('CameraDetail', { camera, cameraId: camera._id })}
+            onPress={() => handleCameraDetail(camera)}
           >
             <HugeIcon icon={InformationCircleIcon} size={16} color={COLORS.textSecondary} />
           </TouchableOpacity>
@@ -497,5 +506,12 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     textAlign: 'center',
     maxWidth: 260,
+  },
+  cardHeaderInfo: {
+    flex: 1,
+    marginRight: SPACING.sm,
+  },
+  playIconOffset: {
+    marginLeft: 2,
   },
 });

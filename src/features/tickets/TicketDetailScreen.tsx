@@ -17,8 +17,6 @@ import {
   CustomerSupportIcon,
   SentIcon,
   AlertCircleIcon,
-  CheckmarkCircle01Icon,
-  UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -108,7 +106,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.iconCircle}>
               <HugeIcon icon={CustomerSupportIcon} size={22} color={COLORS.primary} />
             </View>
-            <View style={{ flex: 1, marginLeft: SPACING.md }}>
+            <View style={styles.ticketHeaderInfo}>
               <Text style={styles.ticketNumber}>
                 #{ticket.ticketNumber || ticket._id.slice(-6).toUpperCase()}
               </Text>
@@ -290,6 +288,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  ticketHeaderInfo: {
+    flex: 1,
+    marginLeft: SPACING.md,
   },
   ticketNumber: {
     ...TYPOGRAPHY.caption,

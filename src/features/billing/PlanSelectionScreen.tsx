@@ -12,8 +12,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   CheckmarkCircle01Icon,
   StarIcon,
-  CreditCardIcon,
-  Shield01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { RootStackParamList } from '../../navigation/types';
@@ -27,6 +25,52 @@ import {
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PlanSelection'>;
 
+// Default / fallback plan tiers matching PRD §8.6 (defined outside component to stabilize references)
+const FALLBACK_PLANS: Plan[] = [
+  {
+    _id: 'plan-basic',
+    name: 'Basic Surveillance',
+    price: 499,
+    currency: 'INR',
+    billingCycle: 'monthly',
+    features: [
+      'Live HD WebRTC Streaming',
+      '7-Day Cloud Video Storage',
+      'Standard Motion Alerts',
+      'Single User Access',
+    ],
+  },
+  {
+    _id: 'plan-premium',
+    name: 'Premium Protection',
+    price: 999,
+    currency: 'INR',
+    billingCycle: 'monthly',
+    isPopular: true,
+    features: [
+      'Live Full HD Streaming',
+      '30-Day Cloud Video Storage',
+      '24/7 AI Human & Vehicle Detection',
+      'Priority Emergency SOS Dispatch',
+      'Multi-Viewer Camera Sharing',
+    ],
+  },
+  {
+    _id: 'plan-ai-pro',
+    name: 'AI-Pro Security',
+    price: 1999,
+    currency: 'INR',
+    billingCycle: 'monthly',
+    features: [
+      '4K Ultra HD Streaming',
+      '90-Day Cloud Video Storage',
+      'Facial Recognition & Perimeter AI',
+      'Dedicated Franchise Emergency Dispatch',
+      'Unlimited Viewer Sharing & Downloads',
+    ],
+  },
+];
+
 export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
   const { data: plansResponse, isLoading: isLoadingPlans } = useGetPlansQuery();
   const { data: subResponse } = useGetCustomerSubscriptionQuery();
@@ -38,52 +82,6 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
       ? activeSub.planId._id
       : activeSub?.planId;
 
-  // Default / fallback plan tiers matching PRD §8.6
-  const fallbackPlans: Plan[] = [
-    {
-      _id: 'plan-basic',
-      name: 'Basic Surveillance',
-      price: 499,
-      currency: 'INR',
-      billingCycle: 'monthly',
-      features: [
-        'Live HD WebRTC Streaming',
-        '7-Day Cloud Video Storage',
-        'Standard Motion Alerts',
-        'Single User Access',
-      ],
-    },
-    {
-      _id: 'plan-premium',
-      name: 'Premium Protection',
-      price: 999,
-      currency: 'INR',
-      billingCycle: 'monthly',
-      isPopular: true,
-      features: [
-        'Live Full HD Streaming',
-        '30-Day Cloud Video Storage',
-        '24/7 AI Human & Vehicle Detection',
-        'Priority Emergency SOS Dispatch',
-        'Multi-Viewer Camera Sharing',
-      ],
-    },
-    {
-      _id: 'plan-ai-pro',
-      name: 'AI-Pro Security',
-      price: 1999,
-      currency: 'INR',
-      billingCycle: 'monthly',
-      features: [
-        '4K Ultra HD Streaming',
-        '90-Day Cloud Video Storage',
-        'Facial Recognition & Perimeter AI',
-        'Dedicated Franchise Emergency Dispatch',
-        'Unlimited Viewer Sharing & Downloads',
-      ],
-    },
-  ];
-
   const plans = React.useMemo(() => {
     const fetchedPlans = plansResponse?.data?.plans;
     if (Array.isArray(fetchedPlans) && fetchedPlans.length > 0) {
@@ -92,7 +90,7 @@ export const PlanSelectionScreen: React.FC<Props> = ({ navigation }) => {
     if (Array.isArray(plansResponse?.data) && plansResponse.data.length > 0) {
       return plansResponse.data as Plan[];
     }
-    return fallbackPlans;
+    return FALLBACK_PLANS;
   }, [plansResponse]);
 
   const handleSelectPlan = async (plan: Plan) => {

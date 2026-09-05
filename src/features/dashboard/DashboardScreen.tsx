@@ -240,7 +240,7 @@ export const DashboardScreen: React.FC = () => {
             {dashboard.cameras.slice(0, 5).map((camera) => (
               <View key={camera._id} style={styles.cameraFeedCard}>
                 <View style={styles.cameraFeedHeader}>
-                  <View style={{ flex: 1, marginRight: SPACING.sm }}>
+                  <View style={styles.cameraFeedTextContainer}>
                     <Text style={styles.cameraFeedName} numberOfLines={1}>
                       {camera.name}
                     </Text>
@@ -320,7 +320,7 @@ export const DashboardScreen: React.FC = () => {
                 <View style={styles.incidentIconCircle}>
                   <HugeIcon icon={Shield01Icon} size={16} color={COLORS.primary} />
                 </View>
-                <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+                <View style={styles.incidentRowContent}>
                   <Text style={styles.incidentRowTitle} numberOfLines={1}>
                     {inc.title}
                   </Text>
@@ -352,7 +352,7 @@ export const DashboardScreen: React.FC = () => {
             <View style={styles.franchiseIconBox}>
               <HugeIcon icon={Building03Icon} size={22} color={COLORS.primary} />
             </View>
-            <View style={{ flex: 1, marginLeft: SPACING.md }}>
+            <View style={styles.franchiseContent}>
               <Text style={styles.franchiseLabel}>Assigned Security Franchise</Text>
               <Text style={styles.franchiseName}>
                 {dashboard.customer.franchiseContact.name}
@@ -620,6 +620,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: SPACING.sm,
   },
+  cameraFeedTextContainer: {
+    flex: 1,
+    marginRight: SPACING.sm,
+  },
   cameraFeedName: {
     fontSize: 14,
     fontWeight: '700',
@@ -736,6 +740,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  franchiseContent: {
+    flex: 1,
+    marginLeft: SPACING.md,
+  },
   franchiseLabel: {
     ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
@@ -782,6 +790,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  incidentRowContent: {
+    flex: 1,
+    marginLeft: SPACING.sm,
   },
   incidentRowTitle: {
     fontSize: 13,
