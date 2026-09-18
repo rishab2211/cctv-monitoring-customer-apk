@@ -19,8 +19,8 @@ const DEV_SOCKET_URL = Platform.select({
 });
 
 export const CONFIG = {
-  API_BASE_URL: __DEV__ ? DEV_API_URL : PROD_API_URL,
-  SOCKET_URL: __DEV__ ? DEV_SOCKET_URL : PROD_SOCKET_URL,
+  API_BASE_URL: PROD_API_URL,
+  SOCKET_URL: PROD_SOCKET_URL,
   APP_SCHEME: 'cctvcustomer',
   INACTIVITY_TIMEOUT_MS: 30 * 60 * 1000, // 30 minutes
   SOS_HOLD_DURATION_MS: 3000, // 3 seconds hold for SOS
