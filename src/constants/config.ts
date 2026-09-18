@@ -1,8 +1,10 @@
 import { Platform } from 'react-native';
 
 // Production URLs (used for release builds, fallback to local dev during debug)
-const PROD_API_URL = 'https://api.yourcctv.com/api/v1';
-const PROD_SOCKET_URL = 'https://api.yourcctv.com';
+// Production URLs for Appetize Demo
+const PROD_API_URL = 'https://cctv-monitoring-backend.onrender.com/api/v1';
+const PROD_SOCKET_URL = 'https://cctv-monitoring-backend.onrender.com';
+
 
 const DEV_API_URL = Platform.select({
   android: 'http://192.168.29.60:5000/api/v1',
