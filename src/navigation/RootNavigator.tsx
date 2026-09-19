@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
@@ -30,7 +30,9 @@ import { ChangePasswordScreen } from '../features/profile/ChangePasswordScreen';
 import { SessionsScreen } from '../features/profile/SessionsScreen';
 import { AboutScreen } from '../features/profile/AboutScreen';
 import { linking } from './linking';
-import { useAppSelector } from '../hooks/redux';
+import { useAppSelector, useAppDispatch } from '../hooks/redux';
+import { logout } from '../app/slices/authSlice';
+import { getRefreshToken } from '../utils/keychain';
 import { SOSFab } from '../components/SOSFab';
 import { useSocket } from '../hooks/useSocket';
 import { useFCMToken } from '../hooks/useFCMToken';
@@ -40,8 +42,20 @@ import { COLORS } from '../constants/theme';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator: React.FC = () => {
+  const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
+
+  // Reconcile persisted auth state against Keychain tokens on boot
+  useEffect(() => {
+    if (isAuthenticated) {
+      getRefreshToken().then((token) => {
+        if (!token) {
+          dispatch(logout());
+        }
+      });
+    }
+  }, [isAuthenticated, dispatch]);
 
   // Background services on authenticated session
   useSocket();

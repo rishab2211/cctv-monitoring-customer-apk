@@ -4,6 +4,7 @@ import {
   Text,
   View,
   ScrollView,
+  FlatList,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
@@ -13,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
+import { isCameraOwner } from '../../utils/cameraUtils';
 import {
   SirenIcon,
   ArrowRight01Icon,
@@ -232,60 +234,59 @@ export const DashboardScreen: React.FC = () => {
             <ActivityIndicator size="small" color={COLORS.primary} />
           </View>
         ) : dashboard?.cameras && dashboard.cameras.length > 0 ? (
-          <ScrollView
+          <FlatList
             horizontal
+            nestedScrollEnabled
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.camerasHorizontalScroll}
-          >
-            {dashboard.cameras.slice(0, 5).map((camera) => (
-              <View key={camera._id} style={styles.cameraFeedCard}>
-                <View style={styles.cameraFeedHeader}>
-                  <View style={styles.cameraFeedTextContainer}>
-                    <Text style={styles.cameraFeedName} numberOfLines={1}>
-                      {camera.name}
-                    </Text>
-                    <Text style={styles.cameraFeedLocation} numberOfLines={1}>
-                      {camera.location?.address || 'Premises'}
-                    </Text>
-                  </View>
-                  <StatusBadge status={camera.status} size="small" />
-                </View>
-
-                {/* Video Thumbnail Placeholder */}
-                <View style={styles.cameraPreviewBox}>
-                  <HugeIcon icon={CctvCameraIcon} size={36} color={COLORS.textMuted} />
-                  {camera.isOwner === false ? (
-                    <View style={styles.sharedBadge}>
-                      <Text style={styles.sharedBadgeText}>SHARED</Text>
+            data={dashboard.cameras.slice(0, 5)}
+            keyExtractor={(camera) => camera._id}
+            renderItem={({ item: camera }) => {
+              const isOwner = isCameraOwner(camera, user?._id);
+              return (
+                <View style={styles.cameraFeedCard}>
+                  <View style={styles.cameraFeedHeader}>
+                    <View style={styles.cameraFeedTextContainer}>
+                      <Text style={styles.cameraFeedName} numberOfLines={1}>
+                        {camera.name}
+                      </Text>
+                      <Text style={styles.cameraFeedLocation} numberOfLines={1}>
+                        {camera.location?.address || 'Premises'}
+                      </Text>
                     </View>
-                  ) : null}
-                </View>
+                    <StatusBadge status={camera.status} size="small" />
+                  </View>
 
-                {/* Action Buttons */}
-                <View style={styles.cameraFeedActions}>
-                  <TouchableOpacity
-                    style={styles.watchLiveBtn}
-                    onPress={() =>
-                      handleWatchLive(
-                        camera._id,
-                        camera.name,
-                        camera.customerId === user?._id || camera.isOwner === true
-                      )
-                    }
-                  >
-                    <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
-                    <Text style={styles.watchLiveBtnText}>Watch Live</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.detailsBtn}
-                    onPress={() => navigation.navigate('CameraDetail', { camera, cameraId: camera._id })}
-                  >
-                    <Text style={styles.detailsBtnText}>Details</Text>
-                  </TouchableOpacity>
+                  {/* Video Thumbnail Placeholder */}
+                  <View style={styles.cameraPreviewBox}>
+                    <HugeIcon icon={CctvCameraIcon} size={36} color={COLORS.textMuted} />
+                    {!isOwner ? (
+                      <View style={styles.sharedBadge}>
+                        <Text style={styles.sharedBadgeText}>SHARED</Text>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {/* Action Buttons */}
+                  <View style={styles.cameraFeedActions}>
+                    <TouchableOpacity
+                      style={styles.watchLiveBtn}
+                      onPress={() => handleWatchLive(camera._id, camera.name, isOwner)}
+                    >
+                      <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
+                      <Text style={styles.watchLiveBtnText}>Watch Live</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.detailsBtn}
+                      onPress={() => navigation.navigate('CameraDetail', { camera, cameraId: camera._id })}
+                    >
+                      <Text style={styles.detailsBtnText}>Details</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </ScrollView>
+              );
+            }}
+          />
         ) : (
           <View style={styles.emptyCamerasBox}>
             <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} style={{ marginBottom: SPACING.sm }} />
@@ -328,15 +329,7 @@ export const DashboardScreen: React.FC = () => {
                     {new Date(inc.createdAt).toLocaleDateString()} • {inc.type.replace('_', ' ').toUpperCase()}
                   </Text>
                 </View>
-                <View
-                  style={[
-                    styles.incidentStatusPill,
-                    inc.status === 'open' && styles.statusOpenPill,
-                    inc.status === 'resolved' && styles.statusResolvedPill,
-                  ]}
-                >
-                  <Text style={styles.incidentStatusText}>{inc.status.toUpperCase()}</Text>
-                </View>
+                <StatusBadge status={inc.status} size="small" />
               </TouchableOpacity>
             ))}
           </View>

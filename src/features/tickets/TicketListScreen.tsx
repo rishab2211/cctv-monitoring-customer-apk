@@ -4,6 +4,7 @@ import {
   Text,
   View,
   FlatList,
+  ScrollView,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
@@ -183,7 +184,11 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         {/* Filter Pills */}
-        <View style={styles.filtersRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersScroll}
+        >
           {(['all', 'open', 'in_progress', 'resolved', 'closed'] as FilterType[]).map((f) => (
             <TouchableOpacity
               key={f}
@@ -200,7 +205,7 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       {isLoading ? (
@@ -281,9 +286,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginLeft: 4,
   },
-  filtersRow: {
+  filtersScroll: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: SPACING.xs,
   },
   filterPill: {

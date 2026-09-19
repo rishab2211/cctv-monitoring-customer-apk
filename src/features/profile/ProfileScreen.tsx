@@ -31,13 +31,17 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { logout } from '../../app/slices/authSlice';
 import { clearTokens } from '../../utils/keychain';
 import { useGetCustomerProfileQuery } from './profileApi';
+import { useLogoutApiMutation } from '../auth/authApi';
 import { getSocket } from '../../hooks/useSocket';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const ProfileScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const reduxUser = useAppSelector((state) => state.auth.user);
   const { data: profileResponse } = useGetCustomerProfileQuery();
+  const [logoutApi] = useLogoutApiMutation();
 
   const user = profileResponse?.data?.user || reduxUser;
 
@@ -48,6 +52,11 @@ export const ProfileScreen: React.FC = () => {
         text: 'Sign Out',
         style: 'destructive',
         onPress: async () => {
+          try {
+            await logoutApi().unwrap();
+          } catch {
+            // Best effort server session cleanup; proceed with local teardown
+          }
           const socket = getSocket();
           if (socket) {
             socket.disconnect();
@@ -65,7 +74,13 @@ export const ProfileScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: Math.max(insets.top, SPACING.lg) },
+      ]}
+    >
       {/* Profile Header Card */}
       <View style={styles.card}>
         <View style={styles.avatar}>

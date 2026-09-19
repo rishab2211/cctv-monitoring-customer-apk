@@ -26,11 +26,19 @@ const axiosBaseQuery =
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError<{ message?: string; error?: string; errors?: any }>;
+      const responseData = err.response?.data;
+      const fallbackMessage = err.message || 'Network request failed. Please check your connection.';
+
       return {
         error: {
           status: err.response?.status,
-          data: err.response?.data || err.message,
-          message: err.response?.data?.message || err.message,
+          data:
+            responseData && typeof responseData === 'object'
+              ? responseData
+              : { message: typeof responseData === 'string' ? responseData : fallbackMessage },
+          message:
+            (typeof responseData === 'object' && responseData?.message) ||
+            fallbackMessage,
         },
       };
     }

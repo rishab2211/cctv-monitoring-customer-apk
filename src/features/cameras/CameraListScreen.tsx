@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,10 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  ScrollView,
   RefreshControl,
   ActivityIndicator,
   Platform,
 } from 'react-native';
+import { isCameraOwner } from '../../utils/cameraUtils';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
@@ -74,119 +76,140 @@ export const CameraListScreen: React.FC = () => {
     });
   }, [cameras, searchQuery, activeFilter, user?._id]);
 
-  const handleWatchLive = (camera: Camera) => {
-    const isOwner = camera.customerId === user?._id || camera.isOwner === true;
-    if (canStream) {
-      navigation.navigate('LiveView', {
-        cameraId: camera._id,
-        cameraName: camera.name,
-        isOwner,
-      });
-    } else {
-      setPaywallVisible(true);
-    }
-  };
+  const handleWatchLive = useCallback(
+    (camera: Camera) => {
+      const isOwner = isCameraOwner(camera, user?._id);
+      if (canStream) {
+        navigation.navigate('LiveView', {
+          cameraId: camera._id,
+          cameraName: camera.name,
+          isOwner,
+        });
+      } else {
+        setPaywallVisible(true);
+      }
+    },
+    [canStream, navigation, user?._id]
+  );
 
-  const handleWatchPlayback = (camera: Camera) => {
-    const isOwner = camera.customerId === user?._id || camera.isOwner === true;
-    if (canStream) {
-      navigation.navigate('RecordingPlayback', {
-        cameraId: camera._id,
-        cameraName: camera.name,
-        isOwner,
-      });
-    } else {
-      setPaywallVisible(true);
-    }
-  };
+  const handleWatchPlayback = useCallback(
+    (camera: Camera) => {
+      const isOwner = isCameraOwner(camera, user?._id);
+      if (canStream) {
+        navigation.navigate('RecordingPlayback', {
+          cameraId: camera._id,
+          cameraName: camera.name,
+          isOwner,
+        });
+      } else {
+        setPaywallVisible(true);
+      }
+    },
+    [canStream, navigation, user?._id]
+  );
 
-  const handleShareCamera = (camera: Camera) => {
-    navigation.navigate('ShareCamera', { camera, cameraId: camera._id });
-  };
+  const handleShareCamera = useCallback(
+    (camera: Camera) => {
+      navigation.navigate('ShareCamera', { camera, cameraId: camera._id });
+    },
+    [navigation]
+  );
 
-  const handleCameraDetail = (camera: Camera) => {
-    navigation.navigate('CameraDetail', { camera, cameraId: camera._id });
-  };
+  const handleCameraDetail = useCallback(
+    (camera: Camera) => {
+      navigation.navigate('CameraDetail', { camera, cameraId: camera._id });
+    },
+    [navigation]
+  );
 
-  const renderCameraCard = ({ item: camera }: { item: Camera }) => {
-    const isOwner = camera.isOwner !== false;
+  const renderCameraCard = useCallback(
+    ({ item: camera }: { item: Camera }) => {
+      const isOwner = isCameraOwner(camera, user?._id);
 
-    return (
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View style={styles.cardHeaderInfo}>
-            <View style={styles.titleRow}>
-              <Text style={styles.cameraName} numberOfLines={1}>
-                {camera.name}
-              </Text>
-              {!isOwner ? (
-                <View style={styles.sharedBadge}>
-                  <Text style={styles.sharedBadgeText}>SHARED</Text>
-                </View>
-              ) : null}
+      return (
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardHeaderInfo}>
+              <View style={styles.titleRow}>
+                <Text style={styles.cameraName} numberOfLines={1}>
+                  {camera.name}
+                </Text>
+                {!isOwner ? (
+                  <View style={styles.sharedBadge}>
+                    <Text style={styles.sharedBadgeText}>SHARED</Text>
+                  </View>
+                ) : null}
+              </View>
+              <View style={styles.locationRow}>
+                <HugeIcon icon={Location01Icon} size={12} color={COLORS.textMuted} />
+                <Text style={styles.cameraLocation} numberOfLines={1}>
+                  {camera.location?.address || 'Premises Camera'}
+                </Text>
+              </View>
             </View>
-            <View style={styles.locationRow}>
-              <HugeIcon icon={Location01Icon} size={12} color={COLORS.textMuted} />
-              <Text style={styles.cameraLocation} numberOfLines={1}>
-                {camera.location?.address || 'Premises Camera'}
-              </Text>
-            </View>
+            <StatusBadge status={camera.status} />
           </View>
-          <StatusBadge status={camera.status} />
-        </View>
 
-        {/* Video Preview Box */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.previewBox}
-          onPress={() => handleWatchLive(camera)}
-        >
-          <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} />
-          <View style={styles.playOverlayButton}>
-            <HugeIcon icon={PlayIcon} size={18} color={COLORS.textInverse} style={styles.playIconOffset} />
-          </View>
-          <View style={styles.serialBox}>
-            <Text style={styles.serialText}>SN: {camera.serialNumber || camera._id.slice(-6)}</Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* Action Controls */}
-        <View style={styles.cardActions}>
+          {/* Video Preview Box */}
           <TouchableOpacity
-            style={[styles.actionBtn, styles.liveBtn]}
+            activeOpacity={0.85}
+            style={styles.previewBox}
             onPress={() => handleWatchLive(camera)}
           >
-            <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
-            <Text style={styles.liveBtnText}>Live Feed</Text>
+            <HugeIcon icon={CctvCameraIcon} size={48} color={COLORS.textMuted} />
+            <View style={styles.playOverlayButton}>
+              <HugeIcon icon={PlayIcon} size={18} color={COLORS.textInverse} style={styles.playIconOffset} />
+            </View>
+            <View style={styles.serialBox}>
+              <Text style={styles.serialText}>SN: {camera.serialNumber || camera._id.slice(-6)}</Text>
+            </View>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.actionBtn, styles.secondaryBtn]}
-            onPress={() => handleWatchPlayback(camera)}
-          >
-            <HugeIcon icon={Clock01Icon} size={14} color={COLORS.textSecondary} />
-            <Text style={styles.secondaryBtnText}>Recordings</Text>
-          </TouchableOpacity>
+          {/* Action Controls */}
+          <View style={styles.cardActions}>
+            <TouchableOpacity
+              style={[styles.actionBtn, styles.liveBtn]}
+              onPress={() => handleWatchLive(camera)}
+            >
+              <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
+              <Text style={styles.liveBtnText}>Live Feed</Text>
+            </TouchableOpacity>
 
-          {isOwner ? (
+            <TouchableOpacity
+              style={[styles.actionBtn, styles.secondaryBtn]}
+              onPress={() => handleWatchPlayback(camera)}
+            >
+              <HugeIcon icon={Clock01Icon} size={14} color={COLORS.textSecondary} />
+              <Text style={styles.secondaryBtnText}>Recordings</Text>
+            </TouchableOpacity>
+
+            {isOwner ? (
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.iconBtn]}
+                onPress={() => handleShareCamera(camera)}
+              >
+                <HugeIcon icon={UserGroupIcon} size={16} color={COLORS.textSecondary} />
+              </TouchableOpacity>
+            ) : null}
+
             <TouchableOpacity
               style={[styles.actionBtn, styles.iconBtn]}
-              onPress={() => handleShareCamera(camera)}
+              onPress={() => handleCameraDetail(camera)}
             >
-              <HugeIcon icon={UserGroupIcon} size={16} color={COLORS.textSecondary} />
+              <HugeIcon icon={InformationCircleIcon} size={16} color={COLORS.textSecondary} />
             </TouchableOpacity>
-          ) : null}
-
-          <TouchableOpacity
-            style={[styles.actionBtn, styles.iconBtn]}
-            onPress={() => handleCameraDetail(camera)}
-          >
-            <HugeIcon icon={InformationCircleIcon} size={16} color={COLORS.textSecondary} />
-          </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    );
-  };
+      );
+    },
+    [
+      user?._id,
+      handleWatchLive,
+      handleWatchPlayback,
+      handleShareCamera,
+      handleCameraDetail,
+    ]
+  );
 
   return (
     <View style={styles.container}>
@@ -215,7 +238,11 @@ export const CameraListScreen: React.FC = () => {
         </View>
 
         {/* Filter Pills */}
-        <View style={styles.filtersRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersScroll}
+        >
           {(['all', 'online', 'offline', 'mine', 'shared'] as FilterType[]).map((f) => (
             <TouchableOpacity
               key={f}
@@ -232,7 +259,7 @@ export const CameraListScreen: React.FC = () => {
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       {/* Cameras List */}
@@ -329,10 +356,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 4,
   },
-  filtersRow: {
+  filtersScroll: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingBottom: SPACING.xs,
+    gap: SPACING.xs,
   },
   filterPill: {
     paddingHorizontal: SPACING.sm + 2,

@@ -7,6 +7,12 @@ import {
 } from '../app/slices/uiSlice';
 import { baseApi } from '../api/rtk-query/baseApi';
 
+const devLog = (...args: any[]) => {
+  if (__DEV__) {
+    console.log(...args);
+  }
+};
+
 let socketInstance: Socket | null = null;
 
 export const getSocket = (): Socket | null => socketInstance;
@@ -47,22 +53,24 @@ export const useSocket = () => {
     socketInstance = socket;
 
     socket.on('connect', () => {
-      console.log('[Socket.IO] Connected with id:', socket.id);
+      devLog('[Socket.IO] Connected with id:', socket.id);
     });
 
     socket.on('connect_error', (err) => {
-      console.warn('[Socket.IO] Connection error:', err.message);
+      if (__DEV__) {
+        console.warn('[Socket.IO] Connection error:', err.message);
+      }
     });
 
     // 1. General notification event (Backend routes to user's private room)
     socket.on('notification', (data) => {
-      console.log('[Socket.IO] Notification received:', data);
+      devLog('[Socket.IO] Notification received:', data);
       dispatch(baseApi.util.invalidateTags(['Notifications', 'Dashboard']));
     });
 
     // 2. SOS Acknowledged event
     socket.on('sos_acknowledged', (data) => {
-      console.log('[Socket.IO] SOS Acknowledged:', data);
+      devLog('[Socket.IO] SOS Acknowledged:', data);
       const triggeredId =
         typeof data?.triggeredBy === 'object' ? data?.triggeredBy?._id : data?.triggeredBy;
       const targetUserId = data?.userId || data?.customerId || triggeredId;
@@ -74,7 +82,7 @@ export const useSocket = () => {
 
     // 3. SOS Resolved event
     socket.on('sos_resolved', (data) => {
-      console.log('[Socket.IO] SOS Resolved:', data);
+      devLog('[Socket.IO] SOS Resolved:', data);
       const triggeredId =
         typeof data?.triggeredBy === 'object' ? data?.triggeredBy?._id : data?.triggeredBy;
       const targetUserId = data?.userId || data?.customerId || triggeredId;
@@ -89,7 +97,7 @@ export const useSocket = () => {
 
     // 4. Incident Updated event
     socket.on('incident_updated', (data) => {
-      console.log('[Socket.IO] Incident updated:', data);
+      devLog('[Socket.IO] Incident updated:', data);
       const reportedId =
         typeof data?.reportedBy === 'object' ? data?.reportedBy?._id : data?.reportedBy;
       const targetUserId = data?.userId || data?.customerId || reportedId;
@@ -101,7 +109,7 @@ export const useSocket = () => {
 
     // 5. Incident Closed event
     socket.on('incident_closed', (data) => {
-      console.log('[Socket.IO] Incident closed:', data);
+      devLog('[Socket.IO] Incident closed:', data);
       const reportedId =
         typeof data?.reportedBy === 'object' ? data?.reportedBy?._id : data?.reportedBy;
       const targetUserId = data?.userId || data?.customerId || reportedId;
@@ -113,7 +121,7 @@ export const useSocket = () => {
 
     // 6. Support Ticket events (ticket_updated, ticket_comment, ticket_closed)
     socket.on('ticket_updated', (data) => {
-      console.log('[Socket.IO] Ticket updated:', data);
+      devLog('[Socket.IO] Ticket updated:', data);
       const creatorId =
         typeof data?.createdBy === 'object' ? data?.createdBy?._id : data?.createdBy;
       const targetUserId = data?.userId || data?.customerId || creatorId;
@@ -124,18 +132,18 @@ export const useSocket = () => {
     });
 
     socket.on('ticket_comment', (data) => {
-      console.log('[Socket.IO] Ticket comment received:', data);
+      devLog('[Socket.IO] Ticket comment received:', data);
       dispatch(baseApi.util.invalidateTags(['Tickets']));
     });
 
     socket.on('ticket_closed', (data) => {
-      console.log('[Socket.IO] Ticket closed:', data);
+      devLog('[Socket.IO] Ticket closed:', data);
       dispatch(baseApi.util.invalidateTags(['Tickets']));
     });
 
     // 7. Camera status & lifecycle events
     const handleCameraStatusChange = (data: any) => {
-      console.log('[Socket.IO] Camera status changed:', data);
+      devLog('[Socket.IO] Camera status changed:', data);
       dispatch(baseApi.util.invalidateTags(['Cameras', 'Dashboard']));
     };
 
@@ -148,12 +156,12 @@ export const useSocket = () => {
 
     // 8. Subscription & Payment webhook events
     socket.on('subscription_updated', (data) => {
-      console.log('[Socket.IO] Subscription updated:', data);
+      devLog('[Socket.IO] Subscription updated:', data);
       dispatch(baseApi.util.invalidateTags(['Billing', 'Dashboard']));
     });
 
     socket.on('payment_success', (data) => {
-      console.log('[Socket.IO] Payment success event:', data);
+      devLog('[Socket.IO] Payment success event:', data);
       dispatch(baseApi.util.invalidateTags(['Billing', 'Dashboard']));
     });
 

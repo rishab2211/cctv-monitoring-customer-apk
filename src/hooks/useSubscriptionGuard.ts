@@ -11,7 +11,7 @@ interface UseSubscriptionGuardOptions {
 
 export const useSubscriptionGuard = (options?: UseSubscriptionGuardOptions) => {
   const { data: subResponse, isLoading } = useGetCustomerSubscriptionQuery(undefined, {
-    skip: !!options?.skipFetch,
+    skip: !!options?.skipFetch || !!options?.statusOverride,
   });
 
   const sub = subResponse?.data;

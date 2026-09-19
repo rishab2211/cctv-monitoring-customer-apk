@@ -34,16 +34,20 @@ export interface AuthTokens {
 
 export type SubscriptionStatus = 'active' | 'past_due' | 'canceled' | 'pending_payment' | 'expired';
 
+export interface SubscriptionPlan {
+  _id: string;
+  name: string;
+  price: number;
+  billingCycle?: string;
+  features?: string[];
+  [key: string]: any;
+}
+
 export interface Subscription {
   _id: string;
   customerId: string;
-  planId: {
-    _id: string;
-    name: string;
-    price: number;
-    billingCycle: string;
-    features?: string[];
-  };
+  planId: string | SubscriptionPlan;
+  planName?: string;
   status: SubscriptionStatus;
   startDate: string;
   endDate: string;
@@ -61,7 +65,7 @@ export interface Camera {
     longitude?: number;
   };
   status: 'online' | 'offline' | 'maintenance';
-  customerId: string;
+  customerId: string | { _id: string; [key: string]: any };
   isOwner?: boolean;
   sharedWith?: Array<{
     userId: string;

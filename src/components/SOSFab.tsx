@@ -11,13 +11,20 @@ import Animated, {
 import { SirenIcon } from '@hugeicons/core-free-icons';
 import { HugeIcon } from './HugeIcon';
 import { COLORS, SHADOWS, SPACING } from '../constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SOSFabProps {
   onPress: () => void;
   visible?: boolean;
+  bottomOffset?: number;
 }
 
-export const SOSFab: React.FC<SOSFabProps> = ({ onPress, visible = true }) => {
+export const SOSFab: React.FC<SOSFabProps> = ({
+  onPress,
+  visible = true,
+  bottomOffset: customBottom,
+}) => {
+  const insets = useSafeAreaInsets();
   const pulse = useSharedValue(1);
 
   useEffect(() => {
@@ -37,8 +44,13 @@ export const SOSFab: React.FC<SOSFabProps> = ({ onPress, visible = true }) => {
 
   if (!visible) return null;
 
+  const dynamicBottom = customBottom ?? (76 + Math.max(insets.bottom, 12));
+
   return (
-    <View style={styles.positionWrapper} pointerEvents="box-none">
+    <View
+      style={[styles.positionWrapper, { bottom: dynamicBottom }]}
+      pointerEvents="box-none"
+    >
       <Animated.View style={[styles.pulseRing, animatedStyle]} pointerEvents="none" />
       <TouchableOpacity
         activeOpacity={0.85}
@@ -57,7 +69,6 @@ export const SOSFab: React.FC<SOSFabProps> = ({ onPress, visible = true }) => {
 const styles = StyleSheet.create({
   positionWrapper: {
     position: 'absolute',
-    bottom: 80,
     right: SPACING.lg,
     alignItems: 'center',
     justifyContent: 'center',

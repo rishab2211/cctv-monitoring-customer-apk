@@ -14,13 +14,17 @@ export const OfflineBanner: React.FC = () => {
   useEffect(() => {
     // Initial fetch on mount
     NetInfo.fetch().then((state) => {
-      const offline = state.isConnected === false || state.isInternetReachable === false;
+      const offline =
+        state.isConnected === false ||
+        (state.isInternetReachable !== null && state.isInternetReachable === false);
       dispatch(setOffline(offline));
     });
 
     // Real-time listener for connectivity changes
     const unsubscribe = NetInfo.addEventListener((state) => {
-      const offline = state.isConnected === false || state.isInternetReachable === false;
+      const offline =
+        state.isConnected === false ||
+        (state.isInternetReachable !== null && state.isInternetReachable === false);
       dispatch(setOffline(offline));
     });
 

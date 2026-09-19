@@ -36,11 +36,13 @@ import {
 } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LiveView'>;
 
-export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
+export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
   const { cameraId, cameraName = 'Live Camera Feed' } = route.params;
+  const insets = useSafeAreaInsets();
 
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [streamStatus, setStreamStatus] = useState<
@@ -192,7 +194,10 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleSnapshot = () => {
-    Alert.alert('Snapshot Saved', 'Camera frame snapshot captured to gallery.');
+    Alert.alert(
+      'Snapshot Feature Notice',
+      'Direct stream frame capture is currently being optimized for WebRTC streams and will be available in the upcoming update.'
+    );
   };
 
   const handleRetry = () => {
@@ -235,9 +240,9 @@ export const LiveViewScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
           )}
 
-          {/* Top Controls Overlay */}
+          {/* Top Bar Overlay */}
           {controlsVisible ? (
-            <View style={styles.topBar}>
+            <View style={[styles.topBar, { paddingTop: Math.max(insets.top, SPACING.md) }]}>
               <TouchableOpacity style={styles.closeButton} onPress={() => navigation.goBack()}>
                 <HugeIcon icon={Cancel01Icon} size={18} color="#FFFFFF" />
               </TouchableOpacity>
@@ -393,7 +398,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    paddingTop: Platform.OS === 'ios' ? 44 : SPACING.md,
     paddingBottom: SPACING.md,
     paddingHorizontal: SPACING.md,
     flexDirection: 'row',

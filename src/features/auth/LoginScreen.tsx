@@ -170,7 +170,9 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   onChangeText={onChange}
                   onBlur={onBlur}
                   autoCapitalize="none"
-                  keyboardType="email-address"
+                  keyboardType="default"
+                  textContentType="username"
+                  autoCorrect={false}
                   editable={!isLoading && (!rateLimitCountdown || rateLimitCountdown <= 0)}
                 />
               )}

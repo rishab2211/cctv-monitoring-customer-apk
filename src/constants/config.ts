@@ -18,9 +18,14 @@ const DEV_SOCKET_URL = Platform.select({
   default: 'http://192.168.29.60:5000',
 });
 
+// Toggle to true if running a local backend server during development
+const USE_LOCAL_DEV_SERVER = false;
+
 export const CONFIG = {
-  API_BASE_URL: PROD_API_URL,
-  SOCKET_URL: PROD_SOCKET_URL,
+  API_BASE_URL:
+    __DEV__ && USE_LOCAL_DEV_SERVER ? (DEV_API_URL ?? PROD_API_URL) : PROD_API_URL,
+  SOCKET_URL:
+    __DEV__ && USE_LOCAL_DEV_SERVER ? (DEV_SOCKET_URL ?? PROD_SOCKET_URL) : PROD_SOCKET_URL,
   APP_SCHEME: 'cctvcustomer',
   INACTIVITY_TIMEOUT_MS: 30 * 60 * 1000, // 30 minutes
   SOS_HOLD_DURATION_MS: 3000, // 3 seconds hold for SOS

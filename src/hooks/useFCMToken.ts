@@ -14,6 +14,12 @@ import { useRegisterDeviceTokenMutation } from '../features/notifications/notifi
 import { useAppDispatch, useAppSelector } from './redux';
 import { baseApi } from '../api/rtk-query/baseApi';
 
+const devLog = (...args: any[]) => {
+  if (__DEV__) {
+    console.log(...args);
+  }
+};
+
 export const useFCMToken = (navigationRef?: any) => {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
@@ -33,7 +39,7 @@ export const useFCMToken = (navigationRef?: any) => {
             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
           );
           if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('[FCM] Notification permission denied on Android 13+');
+            devLog('[FCM] Notification permission denied on Android 13+');
             return false;
           }
         }
@@ -57,9 +63,11 @@ export const useFCMToken = (navigationRef?: any) => {
           token: fcmToken,
           deviceType: Platform.OS === 'ios' ? 'ios' : 'android',
         }).unwrap();
-        console.log('[FCM] Device token registered successfully');
+        devLog('[FCM] Device token registered successfully');
       } catch (err) {
-        console.warn('[FCM] Failed to register token with backend:', err);
+        if (__DEV__) {
+          console.warn('[FCM] Failed to register token with backend:', err);
+        }
       }
     };
 
@@ -106,13 +114,13 @@ export const useFCMToken = (navigationRef?: any) => {
 
       // Listen for token refresh
       unsubscribeOnTokenRefresh = onTokenRefresh(messagingInstance, async (newToken: string) => {
-        console.log('[FCM] Token refreshed:', newToken);
+        devLog('[FCM] Token refreshed:', newToken);
         await registerToken(newToken);
       });
 
       // Foreground message handler
       unsubscribeOnMessage = onMessage(messagingInstance, async (remoteMessage: any) => {
-        console.log('[FCM] Foreground notification received:', remoteMessage);
+        devLog('[FCM] Foreground notification received:', remoteMessage);
 
         // Invalidate relevant caches
         dispatch(baseApi.util.invalidateTags(['Notifications', 'Dashboard']));
@@ -137,7 +145,7 @@ export const useFCMToken = (navigationRef?: any) => {
       unsubscribeNotificationOpened = onNotificationOpenedApp(
         messagingInstance,
         (remoteMessage: any) => {
-          console.log('[FCM] Notification opened from background:', remoteMessage);
+          devLog('[FCM] Notification opened from background:', remoteMessage);
           handleNavigate(remoteMessage);
         }
       );
@@ -145,7 +153,7 @@ export const useFCMToken = (navigationRef?: any) => {
       // Terminated app initial notification
       getInitialNotification(messagingInstance).then((remoteMessage: any) => {
         if (remoteMessage) {
-          console.log('[FCM] App opened from quit state by notification:', remoteMessage);
+          devLog('[FCM] App opened from quit state by notification:', remoteMessage);
           handleNavigate(remoteMessage);
         }
       });

@@ -100,76 +100,109 @@ export const BillingScreen: React.FC = () => {
           </View>
         ) : (
           <>
-            {/* Active Subscription Overview Card */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <View style={styles.planHeaderInfo}>
-                  <Text style={styles.planLabel}>ACTIVE SURVEILLANCE PLAN</Text>
-                  <Text style={styles.planName}>{planName}</Text>
+            {/* Subscription Overview */}
+            {!sub ? (
+              <View style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <View style={styles.planHeaderInfo}>
+                    <Text style={styles.planLabel}>NO ACTIVE SUBSCRIPTION</Text>
+                    <Text style={styles.planName}>Surveillance Inactive</Text>
+                  </View>
+                  <StatusBadge status="inactive" />
                 </View>
-                <StatusBadge status={sub?.status || 'active'} />
-              </View>
-
-              <View style={styles.priceRow}>
-                <Text style={styles.priceCurrency}>₹</Text>
-                <Text style={styles.priceAmount}>{planPrice}</Text>
-                <Text style={styles.priceCycle}>/ month</Text>
-              </View>
-
-              {/* Progress Bar of Cycle */}
-              <View style={styles.progressSection}>
-                <View style={styles.progressLabelsRow}>
-                  <Text style={styles.progressLabel}>Days Remaining</Text>
-                  <Text style={styles.progressValue}>
-                    {daysRemaining} Days (until {endDate.toLocaleDateString()})
-                  </Text>
-                </View>
-                <View style={styles.progressBarTrack}>
-                  <View
-                    style={[
-                      styles.progressBarFill,
-                      { width: `${Math.round((1 - progressRatio) * 100)}%` },
-                      sub?.status !== 'active' && { backgroundColor: COLORS.warningAmber },
-                    ]}
-                  />
-                </View>
-              </View>
-
-              {/* Action Buttons */}
-              <View style={styles.cardActions}>
-                {sub?.status === 'past_due' ? (
-                  <TouchableOpacity
-                    style={[styles.actionBtn, styles.renewBtn]}
-                    onPress={() =>
-                      navigation.navigate('Payment', {
-                        planId: typeof sub?.planId === 'object' ? sub?.planId?._id : 'default',
-                        amount: planPrice,
-                        subscriptionId: sub?._id,
-                      })
-                    }
-                  >
-                    <Text style={styles.renewBtnText}>Pay Pending Invoice</Text>
-                  </TouchableOpacity>
-                ) : (
+                <Text style={styles.noSubDesc}>
+                  Subscribe to a security plan to activate live multi-camera monitoring, cloud recordings, and SOS incident response.
+                </Text>
+                <View style={[styles.cardActions, { marginTop: SPACING.md }]}>
                   <TouchableOpacity
                     style={[styles.actionBtn, styles.upgradeBtn]}
                     onPress={() => navigation.navigate('PlanSelection')}
                   >
-                    <Text style={styles.upgradeBtnText}>Change / Upgrade Plan</Text>
+                    <Text style={styles.upgradeBtnText}>Explore Monitoring Plans</Text>
                   </TouchableOpacity>
-                )}
-
-                {sub?.status === 'active' ? (
-                  <TouchableOpacity
-                    style={styles.cancelLink}
-                    onPress={handleCancelSubscription}
-                    disabled={isCanceling}
-                  >
-                    <Text style={styles.cancelLinkText}>Cancel Subscription</Text>
-                  </TouchableOpacity>
-                ) : null}
+                </View>
               </View>
-            </View>
+            ) : (
+              <View style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <View style={styles.planHeaderInfo}>
+                    <Text style={styles.planLabel}>ACTIVE SURVEILLANCE PLAN</Text>
+                    <Text style={styles.planName}>{planName}</Text>
+                  </View>
+                  <StatusBadge status={sub?.status || 'active'} />
+                </View>
+
+                <View style={styles.priceRow}>
+                  <Text style={styles.priceCurrency}>₹</Text>
+                  <Text style={styles.priceAmount}>{planPrice}</Text>
+                  <Text style={styles.priceCycle}>/ month</Text>
+                </View>
+
+                {/* Progress Bar of Cycle */}
+                <View style={styles.progressSection}>
+                  <View style={styles.progressLabelsRow}>
+                    <Text style={styles.progressLabel}>
+                      Days Remaining ({Math.max(0, Math.min(100, Math.round((1 - progressRatio) * 100)))}%)
+                    </Text>
+                    <Text style={styles.progressValue}>
+                      {daysRemaining} {daysRemaining === 1 ? 'day' : 'days'} left (until {endDate.toLocaleDateString()})
+                    </Text>
+                  </View>
+                  <View style={styles.progressBarTrack}>
+                    <View
+                      style={[
+                        styles.progressBarFill,
+                        {
+                          width: `${Math.max(
+                            4,
+                            Math.min(100, Math.round((1 - progressRatio) * 100))
+                          )}%`,
+                        },
+                        sub?.status !== 'active' && { backgroundColor: COLORS.warningAmber },
+                      ]}
+                    />
+                  </View>
+                </View>
+
+                {/* Action Buttons */}
+                <View style={styles.cardActions}>
+                  {sub?.status === 'past_due' ? (
+                    <TouchableOpacity
+                      style={[styles.actionBtn, styles.renewBtn]}
+                      onPress={() =>
+                        navigation.navigate('Payment', {
+                          planId:
+                            typeof sub?.planId === 'object' && sub?.planId?._id
+                              ? sub.planId._id
+                              : String(sub?.planId || 'default'),
+                          amount: planPrice,
+                          subscriptionId: sub?._id,
+                        })
+                      }
+                    >
+                      <Text style={styles.renewBtnText}>Pay Pending Invoice</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.actionBtn, styles.upgradeBtn]}
+                      onPress={() => navigation.navigate('PlanSelection')}
+                    >
+                      <Text style={styles.upgradeBtnText}>Change / Upgrade Plan</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {sub?.status === 'active' ? (
+                    <TouchableOpacity
+                      style={styles.cancelLink}
+                      onPress={handleCancelSubscription}
+                      disabled={isCanceling}
+                    >
+                      <Text style={styles.cancelLinkText}>Cancel Subscription</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
+            )}
 
             {/* Menu Options Section */}
             <View style={styles.menuSection}>
@@ -393,6 +426,12 @@ const styles = StyleSheet.create({
   },
   planHeaderInfo: {
     flex: 1,
+  },
+  noSubDesc: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textSecondary,
+    lineHeight: 20,
+    marginTop: SPACING.xs,
   },
 });
 

@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   Linking,
   ScrollView,
-  Platform,
   BackHandler,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -38,6 +37,7 @@ import { useTriggerSOSMutation } from './sosApi';
 import { useGetCamerasQuery } from '../cameras/cameraApi';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { addActiveSosAlert } from '../../app/slices/uiSlice';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const HOLD_DURATION_MS = 3000;
@@ -47,6 +47,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS_SIZE;
 type Props = NativeStackScreenProps<RootStackParamList, 'SOSTrigger'>;
 
 export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const preselectedCameraId = route.params?.preselectedCameraId;
   const user = useAppSelector((state) => state.auth.user);
@@ -99,16 +100,48 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
     return () => backHandler.remove();
   }, [isTriggering]);
 
-  // Mock / Geolocation coords
+  // Geolocation coords & premises address
   useEffect(() => {
-    // Default location fallback
+    const userAddr = [
+      user?.address?.street,
+      user?.address?.city,
+      user?.address?.state,
+      user?.address?.pincode,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
     setLocationInfo({
       latitude: 19.076,
       longitude: 72.8777,
-      address: user?.address?.street
-        ? `${user.address.street}, ${user.address.city || ''}`
-        : 'Premises Coords (GPS Active)',
+      address: userAddr || 'Registered Premises Location',
     });
+
+    const globalNav = (globalThis as any)?.navigator;
+    if (globalNav && 'geolocation' in globalNav) {
+      try {
+        globalNav.geolocation.getCurrentPosition(
+          (pos: any) => {
+            if (pos?.coords) {
+              setLocationInfo((prev) => ({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                address:
+                  prev?.address && prev.address !== 'Registered Premises Location'
+                    ? prev.address
+                    : `GPS (${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)})`,
+              }));
+            }
+          },
+          () => {
+            // Keep user address on location error
+          },
+          { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
+        );
+      } catch {
+        // Safe fallback
+      }
+    }
   }, [user]);
 
   const handleHoldComplete = async () => {
@@ -189,7 +222,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}>
       {/* Top Header */}
       <View style={styles.header}>
         <Text style={styles.headerBadge}>EMERGENCY PROTOCOL</Text>
@@ -394,7 +427,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#160404',
-    paddingTop: Platform.OS === 'ios' ? 44 : 20,
   },
   header: {
     flexDirection: 'row',

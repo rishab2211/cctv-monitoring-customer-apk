@@ -7,7 +7,6 @@ interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   role: string | null;
-  isLoading: boolean;
 }
 
 const initialState: AuthState = {
@@ -16,7 +15,6 @@ const initialState: AuthState = {
   refreshToken: null,
   isAuthenticated: false,
   role: null,
-  isLoading: false,
 };
 
 export const authSlice = createSlice({
@@ -36,7 +34,6 @@ export const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       state.role = action.payload.user.role;
       state.isAuthenticated = true;
-      state.isLoading = false;
     },
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
@@ -48,19 +45,15 @@ export const authSlice = createSlice({
         state.refreshToken = action.payload.refreshToken;
       }
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.role = null;
-      state.isLoading = false;
     },
   },
 });
 
-export const { setCredentials, setUser, setToken, setLoading, logout } = authSlice.actions;
+export const { setCredentials, setUser, setToken, logout } = authSlice.actions;
 export default authSlice.reducer;
