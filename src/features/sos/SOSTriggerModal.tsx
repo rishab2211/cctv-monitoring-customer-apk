@@ -225,7 +225,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
     <View style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}>
       {/* Top Header */}
       <View style={styles.header}>
-        <Text style={styles.headerBadge}>EMERGENCY PROTOCOL</Text>
+        <Text style={styles.headerBadge}>EMERGENCY SOS</Text>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.closeButton}
@@ -293,7 +293,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
               </View>
 
               <Text style={styles.holdInstruction}>
-                Press and hold the button for 3 seconds to alert monitoring center
+                Press and hold for 3 seconds to alert the response team
               </Text>
             </View>
 
@@ -309,7 +309,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.infoCardRow}>
                 <HugeIcon icon={Location01Icon} size={18} color={COLORS.sosRed} />
                 <View style={styles.infoCardContent}>
-                  <Text style={styles.infoCardLabel}>BROADCAST LOCATION</Text>
+                  <Text style={styles.infoCardLabel}>YOUR LOCATION</Text>
                   <Text style={styles.infoCardValue}>
                     {locationInfo?.address || 'Detecting premises coordinates...'}
                   </Text>
@@ -320,7 +320,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
             {/* Optional Camera Linking */}
             {cameras.length > 0 ? (
               <View style={styles.cameraPickerSection}>
-                <Text style={styles.sectionLabel}>ASSOCIATE CCTV CAMERA (OPTIONAL)</Text>
+                <Text style={styles.sectionLabel}>ATTACH CAMERA (OPTIONAL)</Text>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -339,7 +339,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
                         !selectedCameraId && styles.cameraChipTextActive,
                       ]}
                     >
-                      General Premises
+                      General premises
                     </Text>
                   </TouchableOpacity>
 
@@ -379,9 +379,9 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
               <HugeIcon icon={CheckmarkCircle01Icon} size={56} color={COLORS.successGreen} />
             </View>
 
-            <Text style={styles.successTitle}>SOS ALERT TRANSMITTED</Text>
+            <Text style={styles.successTitle}>SOS Alert Sent</Text>
             <Text style={styles.successDesc}>
-              Emergency dispatch team has been notified at {successData.timestamp}. Real-time monitoring feed is now broadcasting.
+              The response team was notified at {successData.timestamp}. Live camera feed is now active.
             </Text>
 
             <View style={styles.actionButtonGroup}>
@@ -394,7 +394,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
                 <Text style={styles.callEmergencyText}>
                   {user?.emergencyContact?.phone
                     ? `Call Emergency Contact (${user.emergencyContact.name})`
-                    : 'Call Emergency Dispatch (112)'}
+                    : 'Call Emergency (112)'}
                 </Text>
               </TouchableOpacity>
 
@@ -405,7 +405,7 @@ export const SOSTriggerModal: React.FC<Props> = ({ navigation, route }) => {
                   navigation.replace('SOSDetail', { sosId: successData.sosId });
                 }}
               >
-                <Text style={styles.viewTimelineText}>View Response Timeline</Text>
+                <Text style={styles.viewTimelineText}>View Alert Details</Text>
                 <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.primary} />
               </TouchableOpacity>
 

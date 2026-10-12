@@ -51,7 +51,7 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const onSubmit = async (values: ResetPasswordFormValues) => {
     if (!resetToken) {
-      setErrorMessage('Reset token is missing or expired. Please request a new OTP code.');
+      setErrorMessage('The reset code expired. Please request a new code.');
       return;
     }
 
@@ -65,8 +65,8 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
       }).unwrap();
 
       Alert.alert(
-        'Password Reset Successful',
-        'Your password has been updated successfully. Please sign in with your new password.',
+        'Password Updated',
+        'Your password has been reset. Please sign in with your new password.',
         [
           {
             text: 'Sign In',
@@ -77,7 +77,7 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
     } catch (err: any) {
       console.error('[ResetPassword] Error:', err);
       setErrorMessage(
-        err.data?.message || err.message || 'Failed to reset password. The reset link or OTP may have expired.'
+        err.data?.message || err.message || 'Failed to reset password. The code may have expired.'
       );
     }
   };
@@ -94,7 +94,7 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
           <Text style={styles.title}>Set New Password</Text>
           <Text style={styles.subtitle}>
-            Create a secure password with at least 8 characters, 1 uppercase letter, and 1 number.
+            Enter a new password with at least 8 characters.
           </Text>
         </View>
 
@@ -197,7 +197,7 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
             {isLoading ? (
               <ActivityIndicator color={COLORS.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Save New Password</Text>
+              <Text style={styles.primaryButtonText}>Update Password</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -207,7 +207,7 @@ export const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           onPress={() => navigation.navigate('Login')}
           disabled={isLoading}
         >
-          <Text style={styles.backLinkText}>Cancel & Return to Sign In</Text>
+          <Text style={styles.backLinkText}>Back to Sign In</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

@@ -236,7 +236,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.cardTitle}>Emergency Contact</Text>
           </View>
           <Text style={styles.cardSubtext}>
-            Notified immediately when an Emergency SOS is triggered on your account.
+            Notified when you send an emergency SOS.
           </Text>
 
           <View style={styles.fieldGroup}>
@@ -307,7 +307,7 @@ export const EditProfileScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <HugeIcon icon={Location01Icon} size={20} color={COLORS.secondary} />
-            <Text style={styles.cardTitle}>Monitored Premises Address</Text>
+            <Text style={styles.cardTitle}>Premises Address</Text>
           </View>
 
           <View style={styles.fieldGroup}>

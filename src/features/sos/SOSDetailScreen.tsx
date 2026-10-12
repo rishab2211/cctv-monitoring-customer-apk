@@ -82,7 +82,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingSubtext}>Loading emergency dispatch details...</Text>
+        <Text style={styles.loadingSubtext}>Loading alert details...</Text>
       </View>
     );
   }
@@ -90,7 +90,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   if (!alert) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>SOS Alert record not found or access expired.</Text>
+        <Text style={styles.errorText}>Alert not found.</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -153,12 +153,12 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.statusHeroContent}>
               <Text style={styles.statusHeroTitle}>
                 {alert.status === 'active'
-                  ? 'EMERGENCY DISPATCH ACTIVE'
+                  ? 'EMERGENCY ACTIVE'
                   : alert.status === 'acknowledged'
-                  ? 'RESPONDER ACKNOWLEDGED'
+                  ? 'ACKNOWLEDGED'
                   : alert.status === 'resolved'
-                  ? 'EMERGENCY RESOLVED'
-                  : 'FALSE ALARM RECORDED'}
+                  ? 'RESOLVED'
+                  : 'FALSE ALARM'}
               </Text>
               <Text style={styles.statusHeroSubtitle}>
                 Alert ID: #{alert._id.slice(-8).toUpperCase()} • {triggeredDate}
@@ -175,14 +175,14 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <Text style={styles.callDispatcherText}>
               {user?.emergencyContact?.phone
                 ? `Call Emergency Contact (${user.emergencyContact.name})`
-                : 'Call Emergency Responder'}
+                : 'Call Response Team'}
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Location & GPS Card */}
         <View style={styles.card}>
-          <Text style={styles.cardSectionTitle}>Broadcast Location</Text>
+          <Text style={styles.cardSectionTitle}>Location</Text>
           <View style={styles.locationRow}>
             <HugeIcon icon={Location01Icon} size={20} color={COLORS.sosRed} />
             <View style={styles.locationContent}>
@@ -203,7 +203,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
         {/* Associated Camera Card (If linked) */}
         {cameraObj ? (
           <View style={styles.card}>
-            <Text style={styles.cardSectionTitle}>Associated CCTV Camera</Text>
+            <Text style={styles.cardSectionTitle}>Attached Camera</Text>
             <View style={styles.cameraRow}>
               <View style={styles.cameraIconBox}>
                 <HugeIcon icon={CctvCameraIcon} size={24} color={COLORS.primary} />
@@ -225,9 +225,9 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
         ) : null}
 
-        {/* Vertical Dispatch Timeline */}
+        {/* Timeline */}
         <View style={styles.card}>
-          <Text style={styles.cardSectionTitle}>Incident Response Timeline</Text>
+          <Text style={styles.cardSectionTitle}>Timeline</Text>
 
           <View style={styles.timelineContainer}>
             {/* Step 1: Triggered */}
@@ -241,7 +241,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                   <Text style={styles.timelineStepTime}>{triggeredDate}</Text>
                 </View>
                 <Text style={styles.timelineStepDesc}>
-                  Emergency signal broadcasted to security command center and emergency contacts.
+                  Alert sent to the security team and emergency contacts.
                 </Text>
               </View>
             </View>
@@ -262,7 +262,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               </View>
               <View style={styles.timelineContent}>
                 <View style={styles.timelineStepHeader}>
-                  <Text style={styles.timelineStepTitle}>Security Dispatch Acknowledged</Text>
+                  <Text style={styles.timelineStepTitle}>Security Team Acknowledged</Text>
                   {alert.acknowledgedAt ? (
                     <Text style={styles.timelineStepTime}>
                       {new Date(alert.acknowledgedAt).toLocaleTimeString([], {
@@ -277,9 +277,9 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                     ? `Acknowledged by ${
                         typeof alert.acknowledgedBy === 'object' && alert.acknowledgedBy !== null
                           ? alert.acknowledgedBy.name
-                          : 'Monitoring Operator'
-                      }. Dispatch protocols activated.`
-                    : 'Awaiting operator acknowledgment...'}
+                          : 'Operator'
+                      }. The team has responded.`
+                    : 'Awaiting operator response...'}
                 </Text>
               </View>
             </View>
@@ -307,7 +307,7 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.timelineContent}>
                 <View style={styles.timelineStepHeader}>
                   <Text style={styles.timelineStepTitle}>
-                    {alert.status === 'false_alarm' ? 'Closed as False Alarm' : 'Resolved & Secured'}
+                    {alert.status === 'false_alarm' ? 'Closed as False Alarm' : 'Resolved'}
                   </Text>
                   {alert.resolvedAt ? (
                     <Text style={styles.timelineStepTime}>
@@ -321,27 +321,27 @@ export const SOSDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                 <Text style={styles.timelineStepDesc}>
                   {alert.resolvedAt
                     ? alert.resolutionNotes ||
-                      `Incident verified and closed by ${
+                      `Closed by ${
                         typeof alert.resolvedBy === 'object' && alert.resolvedBy !== null
                           ? alert.resolvedBy.name
                           : 'Field Team'
                       }.`
-                    : 'Resolution pending on-site verification.'}
+                    : 'Pending verification.'}
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Audit Log (If available) */}
+        {/* History (If available) */}
         {timeline.length > 0 ? (
           <View style={styles.card}>
-            <Text style={styles.cardSectionTitle}>Audit Log Entries ({timeline.length})</Text>
+            <Text style={styles.cardSectionTitle}>History ({timeline.length})</Text>
             {timeline.map((item) => (
               <View key={item._id} style={styles.auditRow}>
                 <Text style={styles.auditAction}>{item.action.toUpperCase().replace('_', ' ')}</Text>
                 <Text style={styles.auditUser}>
-                  {item.performedBy?.name || 'System Operator'} • {new Date(item.timestamp).toLocaleTimeString()}
+                  {item.performedBy?.name || 'Operator'} • {new Date(item.timestamp).toLocaleTimeString()}
                 </Text>
                 {item.notes ? <Text style={styles.auditNotes}>{item.notes}</Text> : null}
               </View>

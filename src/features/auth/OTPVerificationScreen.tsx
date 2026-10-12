@@ -61,7 +61,7 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
       return;
     }
     if (targetOtp.length !== 6) {
-      setErrorMessage('Please enter all 6 digits of the OTP code.');
+      setErrorMessage('Please enter the 6-digit code.');
       return;
     }
 
@@ -82,7 +82,7 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
     } catch (err: any) {
       console.error('[OTP] Verification error:', err);
       setErrorMessage(
-        err.data?.message || err.message || 'Invalid or expired OTP code. Please try again.'
+        err.data?.message || err.message || 'Invalid or expired code. Please try again.'
       );
     }
   };
@@ -99,10 +99,10 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
     try {
       await resendOtpMutation({ email: email.trim().toLowerCase() }).unwrap();
       setCountdown(60);
-      setResendSuccess('A fresh 6-digit OTP code has been sent to your email.');
+      setResendSuccess('A new code has been sent to your email.');
     } catch (err: any) {
       setErrorMessage(
-        err.data?.message || err.message || 'Failed to resend OTP. Please try again shortly.'
+        err.data?.message || err.message || 'Failed to resend code. Please try again shortly.'
       );
     }
   };
@@ -194,7 +194,7 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
             {isVerifying ? (
               <ActivityIndicator color={COLORS.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Verify OTP</Text>
+              <Text style={styles.primaryButtonText}>Verify Code</Text>
             )}
           </TouchableOpacity>
 
@@ -213,7 +213,7 @@ export const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) =>
                 {isResending ? (
                   <ActivityIndicator size="small" color={COLORS.primary} />
                 ) : (
-                  <Text style={styles.resendText}>Resend OTP Code</Text>
+                  <Text style={styles.resendText}>Resend Code</Text>
                 )}
               </TouchableOpacity>
             )}

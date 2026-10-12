@@ -135,7 +135,7 @@ export const DashboardScreen: React.FC = () => {
             <View style={styles.sosAlertContent}>
               <Text style={styles.sosAlertTitle}>ACTIVE SOS ALERT</Text>
               <Text style={styles.sosAlertDesc}>
-                Emergency response team has been alerted. Tap to view live dispatch timeline.
+                Response team alerted. Tap to view timeline.
               </Text>
             </View>
             <HugeIcon icon={ArrowRight01Icon} size={20} color={COLORS.sosRed} />
@@ -159,7 +159,7 @@ export const DashboardScreen: React.FC = () => {
                 <Text style={styles.subscriptionDate}>
                   {dashboard.subscription.status === 'active'
                     ? `Valid until ${new Date(dashboard.subscription.endDate).toLocaleDateString()}`
-                    : 'Action required to restore full surveillance'}
+                    : 'Payment required to keep streaming active'}
                 </Text>
               </View>
               <StatusBadge status={dashboard.subscription.status} />
@@ -179,13 +179,13 @@ export const DashboardScreen: React.FC = () => {
           </View>
         ) : null}
 
-        {/* Camera Health Quick Stats */}
+        {/* Camera Status Quick Stats */}
         <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>System Health</Text>
+          <Text style={styles.sectionTitle}>Camera Status</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('MainTabs', { screen: 'TabCameras' })}
           >
-            <Text style={styles.sectionLink}>View All Feeds</Text>
+            <Text style={styles.sectionLink}>View all</Text>
           </TouchableOpacity>
         </View>
 
@@ -299,9 +299,9 @@ export const DashboardScreen: React.FC = () => {
 
         {/* Recent Incidents Section */}
         <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>Security Incidents</Text>
+          <Text style={styles.sectionTitle}>Incidents</Text>
           <TouchableOpacity onPress={() => navigation.navigate('IncidentList')}>
-            <Text style={styles.sectionLink}>View All</Text>
+            <Text style={styles.sectionLink}>View all</Text>
           </TouchableOpacity>
         </View>
 
@@ -335,7 +335,7 @@ export const DashboardScreen: React.FC = () => {
           </View>
         ) : (
           <View style={styles.emptyIncidentsBox}>
-            <Text style={styles.emptyIncidentsText}>No recent incidents reported on your premises.</Text>
+            <Text style={styles.emptyIncidentsText}>No incidents reported.</Text>
           </View>
         )}
 
@@ -346,7 +346,7 @@ export const DashboardScreen: React.FC = () => {
               <HugeIcon icon={Building03Icon} size={22} color={COLORS.primary} />
             </View>
             <View style={styles.franchiseContent}>
-              <Text style={styles.franchiseLabel}>Assigned Security Franchise</Text>
+              <Text style={styles.franchiseLabel}>Your Security Provider</Text>
               <Text style={styles.franchiseName}>
                 {dashboard.customer.franchiseContact.name}
               </Text>

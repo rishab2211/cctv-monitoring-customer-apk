@@ -104,7 +104,7 @@ export const ProfileScreen: React.FC = () => {
             <HugeIcon icon={CustomerSupportIcon} size={20} color={COLORS.primary} />
           </View>
           <View style={styles.franchiseContent}>
-            <Text style={styles.franchiseLabel}>Assigned Franchise Support</Text>
+            <Text style={styles.franchiseLabel}>Support Provider</Text>
             <Text style={styles.franchiseName}>{user.franchiseId.name}</Text>
             {user.franchiseId.phone ? (
               <Text style={styles.franchisePhone}>{user.franchiseId.phone}</Text>
@@ -187,7 +187,7 @@ export const ProfileScreen: React.FC = () => {
           </View>
           <View style={styles.menuTextContainer}>
             <Text style={styles.menuTitle}>Active Device Sessions</Text>
-            <Text style={styles.menuSubtitle}>Manage signed-in devices & mass revoke</Text>
+            <Text style={styles.menuSubtitle}>Manage signed-in devices</Text>
           </View>
           <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
         </TouchableOpacity>
@@ -206,8 +206,8 @@ export const ProfileScreen: React.FC = () => {
             <HugeIcon icon={Shield01Icon} size={18} color={COLORS.primary} />
           </View>
           <View style={styles.menuTextContainer}>
-            <Text style={styles.menuTitle}>My Incident Reports</Text>
-            <Text style={styles.menuSubtitle}>View filed incident breaches & notes</Text>
+            <Text style={styles.menuTitle}>Incident Reports</Text>
+            <Text style={styles.menuSubtitle}>View submitted reports and updates</Text>
           </View>
           <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
         </TouchableOpacity>
@@ -224,8 +224,8 @@ export const ProfileScreen: React.FC = () => {
             <HugeIcon icon={SirenIcon} size={18} color={COLORS.error} />
           </View>
           <View style={styles.menuTextContainer}>
-            <Text style={styles.menuTitle}>Emergency SOS History</Text>
-            <Text style={styles.menuSubtitle}>View past emergency logs & dispatches</Text>
+            <Text style={styles.menuTitle}>Emergency History</Text>
+            <Text style={styles.menuSubtitle}>View past emergency alerts</Text>
           </View>
           <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
         </TouchableOpacity>
@@ -243,7 +243,7 @@ export const ProfileScreen: React.FC = () => {
           </View>
           <View style={styles.menuTextContainer}>
             <Text style={styles.menuTitle}>Support Tickets</Text>
-            <Text style={styles.menuSubtitle}>Direct assistance from support engineers</Text>
+            <Text style={styles.menuSubtitle}>Get help with cameras, billing, or your account</Text>
           </View>
           <HugeIcon icon={ArrowRight01Icon} size={16} color={COLORS.textMuted} />
         </TouchableOpacity>

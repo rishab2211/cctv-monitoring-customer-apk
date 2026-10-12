@@ -88,7 +88,7 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
       if (userRole !== 'customer') {
         Alert.alert(
           'Access Restricted',
-          'Only customer accounts can sign in to this mobile application. Admin and Operator staff must log in through their dedicated portals.'
+          'Only customer accounts can sign in to this app. Staff and operators should use their portals.'
         );
         return;
       }
@@ -107,14 +107,14 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
     } catch (err: any) {
       console.error('[Login] Error:', err);
       if (err.status === 401) {
-        setErrorMessage('Invalid credentials. Please verify your email/phone and password.');
+        setErrorMessage('Invalid email, phone, or password.');
       } else if (err.status === 403) {
-        setErrorMessage('Your account has been deactivated. Please contact customer support.');
+        setErrorMessage('Your account is disabled. Please contact support.');
       } else if (err.status === 429) {
-        setErrorMessage('Too many login attempts. Please wait for the countdown before retrying.');
+        setErrorMessage('Too many attempts. Please wait a moment.');
       } else {
         setErrorMessage(
-          err.data?.message || err.message || 'Unable to sign in. Please check your network connection.'
+          err.data?.message || err.message || 'Unable to sign in. Please check your connection and try again.'
         );
       }
     }
@@ -132,7 +132,7 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
             <HugeIcon icon={Shield01Icon} size={32} color={COLORS.primary} strokeWidth={1.8} />
           </View>
           <Text style={styles.title}>CCTV Security</Text>
-          <Text style={styles.subtitle}>Sign in to monitor your protected premises</Text>
+          <Text style={styles.subtitle}>Sign in to view your cameras and alerts</Text>
         </View>
 
         {/* Rate Limit Warning Banner */}

@@ -107,7 +107,7 @@ export const NotificationPreferencesScreen: React.FC<Props> = () => {
             </View>
             <View style={styles.categoryTextContainer}>
               <Text style={styles.categoryTitle}>Security Alerts</Text>
-              <Text style={styles.categoryDesc}>SOS triggers, AI motion alerts, camera offline notices</Text>
+              <Text style={styles.categoryDesc}>SOS triggers, motion alerts, camera offline notices</Text>
             </View>
           </View>
 

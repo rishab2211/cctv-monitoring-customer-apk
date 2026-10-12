@@ -47,7 +47,7 @@ export const AboutScreen: React.FC<Props> = () => {
         <Text style={styles.appName}>CCTV Customer</Text>
         <Text style={styles.versionText}>Version 0.0.1 (Build 101)</Text>
         <Text style={styles.tagline}>
-          AI-Powered Smart Surveillance & Emergency Response Platform
+          Cloud CCTV Surveillance & Real-Time Monitoring Platform
         </Text>
       </View>
 
@@ -58,8 +58,8 @@ export const AboutScreen: React.FC<Props> = () => {
           <Text style={styles.cardTitle}>Enterprise-Grade Security</Text>
         </View>
         <Text style={styles.bodyText}>
-          All CCTV video streams and telemetry are secured end-to-end with AES-256 encryption.
-          Recordings and incident media are stored on certified secure cloud infrastructure.
+          All CCTV video streams are encrypted and delivered with ultra-low latency WebRTC protocols.
+          Cloud recordings and incident reports are securely stored on protected infrastructure.
         </Text>
       </View>
 

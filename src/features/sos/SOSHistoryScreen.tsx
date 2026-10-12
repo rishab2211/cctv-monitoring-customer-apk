@@ -60,7 +60,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
       case 'acknowledged':
         return (
           <View style={[styles.statusBadge, styles.statusBadgeAck]}>
-            <Text style={styles.statusTextAck}>DISPATCHED</Text>
+            <Text style={styles.statusTextAck}>ACKNOWLEDGED</Text>
           </View>
         );
       case 'resolved':
@@ -136,7 +136,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.infoRow}>
             <HugeIcon icon={CctvCameraIcon} size={14} color={COLORS.textMuted} />
             <Text style={styles.infoText} numberOfLines={1}>
-              Linked Feed: {cameraName}
+              Camera: {cameraName}
             </Text>
           </View>
         ) : null}
@@ -152,7 +152,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
         ) : null}
 
         <View style={styles.cardFooter}>
-          <Text style={styles.viewTimelineText}>View Response Timeline</Text>
+          <Text style={styles.viewTimelineText}>View details</Text>
           <HugeIcon icon={ArrowRight01Icon} size={14} color={COLORS.primary} />
         </View>
       </TouchableOpacity>
@@ -165,7 +165,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.title}>Emergency History</Text>
         <Text style={styles.subtitle}>
-          Record of all triggered SOS alerts and dispatch logs
+          All past emergency alerts and responses
         </Text>
 
         <View style={styles.filtersRow}>
@@ -195,7 +195,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
       {isLoading ? (
         <View style={styles.centerLoading}>
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Loading emergency records...</Text>
+          <Text style={styles.loadingText}>Loading emergency history...</Text>
         </View>
       ) : (
         <FlatList
@@ -220,7 +220,7 @@ export const SOSHistoryScreen: React.FC<Props> = ({ navigation }) => {
               description={
                 activeFilter !== 'all'
                   ? 'No emergency alerts match the selected filter.'
-                  : 'Your safety logs are clean. No emergency alerts have been triggered.'
+                  : 'No emergency alerts have been triggered.'
               }
             />
           }

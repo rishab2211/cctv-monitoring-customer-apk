@@ -79,7 +79,7 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
     } catch (err: any) {
       console.error('[Register] Error:', err);
       if (err.status === 409) {
-        setErrorMessage('An account with this email address already exists. Please sign in instead.');
+        setErrorMessage('An account with this email already exists. Please sign in instead.');
       } else if (err.data?.errors && Array.isArray(err.data.errors)) {
         const errorList = err.data.errors.map((e: any) => e.message).join('\n');
         setErrorMessage(errorList);
@@ -103,7 +103,7 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.header}>
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>
-            Register for smart CCTV surveillance and rapid emergency response
+            Create your account to view cameras and manage security
           </Text>
         </View>
 
@@ -281,7 +281,7 @@ export const SignUpScreen: React.FC<Props> = ({ navigation }) => {
             {isLoading ? (
               <ActivityIndicator color={COLORS.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Register Account</Text>
+              <Text style={styles.primaryButtonText}>Create Account</Text>
             )}
           </TouchableOpacity>
         </View>

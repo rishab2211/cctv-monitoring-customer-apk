@@ -75,7 +75,7 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
           </View>
           <Text style={styles.title}>Forgot Password?</Text>
           <Text style={styles.subtitle}>
-            Enter your registered email address. We will send you a 6-digit OTP code to verify your identity.
+            Enter your email and we'll send you a 6-digit code to reset your password.
           </Text>
         </View>
 
@@ -88,7 +88,7 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
 
         <View style={styles.form}>
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Registered Email Address</Text>
+            <Text style={styles.inputLabel}>Email Address</Text>
             <Controller
               control={control}
               name="email"
@@ -120,7 +120,7 @@ export const ForgotPasswordScreen: React.FC<Props> = ({ navigation, route }) => 
             {isLoading ? (
               <ActivityIndicator color={COLORS.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Send 6-Digit OTP</Text>
+              <Text style={styles.primaryButtonText}>Send Code</Text>
             )}
           </TouchableOpacity>
         </View>
