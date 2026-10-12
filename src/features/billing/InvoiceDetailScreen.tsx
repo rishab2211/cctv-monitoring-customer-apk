@@ -124,7 +124,7 @@ export const InvoiceDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.lineItemRow}>
             <View style={styles.lineItemInfo}>
               <Text style={styles.lineItemTitle}>CCTV Cloud Security Plan (Monthly)</Text>
-              <Text style={styles.lineItemDesc}>Cloud storage, AI motion detection & live streams</Text>
+              <Text style={styles.lineItemDesc}>Cloud storage, motion detection & live streaming</Text>
             </View>
             <Text style={styles.lineItemAmount}>₹{subtotal.toFixed(2)}</Text>
           </View>

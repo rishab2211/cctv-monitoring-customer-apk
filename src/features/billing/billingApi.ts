@@ -245,20 +245,35 @@ export const billingApi = baseApi.injectEndpoints({
     // 10. Get payment transactions history
     getPaymentHistory: builder.query<PaymentHistoryResponse, void>({
       query: () => ({
-        url: '/customer/payments',
+        url: '/payments',
         method: 'GET',
       }),
       transformResponse: (response: any) => {
-        let payments: PaymentTransaction[] = [];
+        let rawItems: any[] = [];
         if (Array.isArray(response)) {
-          payments = response;
-        } else if (Array.isArray(response?.data)) {
-          payments = response.data;
+          rawItems = response;
         } else if (Array.isArray(response?.data?.payments)) {
-          payments = response.data.payments;
+          rawItems = response.data.payments;
         } else if (Array.isArray(response?.payments)) {
-          payments = response.payments;
+          rawItems = response.payments;
+        } else if (Array.isArray(response?.data?.invoices)) {
+          rawItems = response.data.invoices;
+        } else if (Array.isArray(response?.invoices)) {
+          rawItems = response.invoices;
+        } else if (Array.isArray(response?.data)) {
+          rawItems = response.data;
         }
+
+        const payments: PaymentTransaction[] = rawItems.map((item: any) => ({
+          _id: item._id || item.id || `pay_${Date.now()}`,
+          orderId: item.orderId || item.razorpay_order_id || item.invoiceNumber || 'ORD-DIRECT',
+          paymentId: item.paymentId || item.razorpay_payment_id || item._id,
+          amount: typeof item.amount === 'number' ? item.amount : Number(item.amount) || 0,
+          currency: item.currency || 'INR',
+          status: item.status === 'paid' ? 'captured' : item.status || 'captured',
+          createdAt: item.createdAt || item.billingDate || item.paidAt || new Date().toISOString(),
+          method: item.method || 'Razorpay / Net Banking',
+        }));
 
         return {
           success: true,
