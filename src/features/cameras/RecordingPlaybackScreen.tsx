@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import Video, { VideoRef } from 'react-native-video';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -20,6 +21,7 @@ import {
   Forward01Icon,
   Download01Icon,
   Clock01Icon,
+  Calendar03Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import {
@@ -30,6 +32,7 @@ import {
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useAppSelector } from '../../hooks/redux';
+import { isCameraOwner } from '../../utils/cameraUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecordingPlayback'>;
 
@@ -44,7 +47,7 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
     route.params.isOwner !== undefined
       ? route.params.isOwner
       : camera
-      ? camera.customerId === user?._id
+      ? isCameraOwner(camera, user?._id)
       : false;
 
   const [selectedChunk, setSelectedChunk] = useState<PlaybackChunk | null>(null);
@@ -52,20 +55,34 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
   const [paywallVisible, setPaywallVisible] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [selectedDayOffset, setSelectedDayOffset] = useState<0 | 1>(0); // 0 = Today, 1 = Yesterday
 
   const videoRef = useRef<VideoRef>(null);
   const { canStream, paywallType } = useSubscriptionGuard();
 
-  // Query 24h window by default (today's start to now)
+  // Query window based on selected day offset
   const { startTime, endTime } = useMemo(() => {
-    const end = new Date();
-    const start = new Date();
-    start.setHours(0, 0, 0, 0); // start of today
-    return {
-      startTime: start.toISOString(),
-      endTime: end.toISOString(),
-    };
-  }, []);
+    if (selectedDayOffset === 0) {
+      const end = new Date();
+      const start = new Date();
+      start.setHours(0, 0, 0, 0); // start of today
+      return {
+        startTime: start.toISOString(),
+        endTime: end.toISOString(),
+      };
+    } else {
+      const start = new Date();
+      start.setDate(start.getDate() - 1);
+      start.setHours(0, 0, 0, 0); // start of yesterday
+      const end = new Date();
+      end.setDate(end.getDate() - 1);
+      end.setHours(23, 59, 59, 999); // end of yesterday
+      return {
+        startTime: start.toISOString(),
+        endTime: end.toISOString(),
+      };
+    }
+  }, [selectedDayOffset]);
 
   const {
     data: playbackResponse,
@@ -78,10 +95,21 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
   const chunks = playbackResponse?.data?.chunks || [];
   const activeVideoUrl = selectedChunk?.url || chunks[0]?.url;
 
-  const handleDownload = (chunk: PlaybackChunk) => {
+  const handleDownload = async (chunk: PlaybackChunk) => {
+    if (chunk.url) {
+      try {
+        const canOpen = await Linking.canOpenURL(chunk.url);
+        if (canOpen) {
+          await Linking.openURL(chunk.url);
+          return;
+        }
+      } catch (err) {
+        console.warn('[Playback] Error opening download URL:', err);
+      }
+    }
     Alert.alert(
       'Download Recording',
-      `Downloading recording segment (${new Date(chunk.startTime).toLocaleTimeString()} - ${new Date(chunk.endTime).toLocaleTimeString()})...`,
+      `Accessing cloud footage: ${chunk.url || 'URL unavailable'}`,
       [{ text: 'OK' }]
     );
   };
@@ -162,7 +190,42 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.headerInfo}>
           <Text style={styles.cameraTitle}>{cameraName}</Text>
-          <Text style={styles.timelineLabel}>24h Cloud Recording Timeline</Text>
+          <Text style={styles.timelineLabel}>Cloud Recording Footage</Text>
+        </View>
+
+        {/* Date Filter Selection Pills */}
+        <View style={styles.dateFilterRow}>
+          <TouchableOpacity
+            style={[styles.dateFilterPill, selectedDayOffset === 0 && styles.dateFilterPillActive]}
+            onPress={() => setSelectedDayOffset(0)}
+          >
+            <HugeIcon
+              icon={Calendar03Icon}
+              size={13}
+              color={selectedDayOffset === 0 ? COLORS.textInverse : COLORS.textSecondary}
+            />
+            <Text
+              style={[styles.dateFilterText, selectedDayOffset === 0 && styles.dateFilterTextActive]}
+            >
+              Today
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.dateFilterPill, selectedDayOffset === 1 && styles.dateFilterPillActive]}
+            onPress={() => setSelectedDayOffset(1)}
+          >
+            <HugeIcon
+              icon={Clock01Icon}
+              size={13}
+              color={selectedDayOffset === 1 ? COLORS.textInverse : COLORS.textSecondary}
+            />
+            <Text
+              style={[styles.dateFilterText, selectedDayOffset === 1 && styles.dateFilterTextActive]}
+            >
+              Yesterday
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Recorded Chunks List */}
@@ -315,7 +378,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   headerInfo: {
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.md,
   },
   cameraTitle: {
     ...TYPOGRAPHY.h2,
@@ -326,6 +389,34 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.bodySmall,
     color: COLORS.textSecondary,
     marginTop: 2,
+  },
+  dateFilterRow: {
+    flexDirection: 'row',
+    marginBottom: SPACING.md,
+  },
+  dateFilterPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs + 2,
+    borderRadius: RADIUS.pill,
+    marginRight: SPACING.sm,
+  },
+  dateFilterPillActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  dateFilterText: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    fontWeight: '700',
+    marginLeft: 6,
+  },
+  dateFilterTextActive: {
+    color: COLORS.textInverse,
   },
   sectionHeader: {
     ...TYPOGRAPHY.h3,

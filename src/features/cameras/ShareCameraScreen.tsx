@@ -53,8 +53,8 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
       }).unwrap();
 
       Alert.alert(
-        'Camera Shared Successfully',
-        `Live access to "${camera?.name || 'this camera'}" has been shared with ${email.trim()}.`,
+        'Camera Shared',
+        `Access to "${camera?.name || 'this camera'}" has been shared with ${email.trim()}.`,
         [
           {
             text: 'OK',
@@ -80,9 +80,9 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.iconCircle}>
             <HugeIcon icon={UserGroupIcon} size={28} color={COLORS.primary} strokeWidth={1.8} />
           </View>
-          <Text style={styles.title}>Share Camera Access</Text>
+          <Text style={styles.title}>Share Camera</Text>
           <Text style={styles.subtitle}>
-            Grant trusted family members or staff real-time access to{' '}
+            Share access to{' '}
             <Text style={styles.cameraNameHighlight}>{camera?.name || 'this camera'}</Text>
           </Text>
         </View>
@@ -96,7 +96,7 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
             style={styles.noticeIcon}
           />
           <Text style={styles.noticeText}>
-            <Text style={styles.boldText}>Note:</Text> Shared recipients must have a registered account and an active subscription to watch live streams.
+            <Text style={styles.boldText}>Note:</Text> The recipient must have an account and active plan to view live video.
           </Text>
         </View>
 
@@ -109,7 +109,7 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
 
         <View style={styles.form}>
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Recipient Registered Email</Text>
+            <Text style={styles.inputLabel}>Recipient Email</Text>
             <TextInput
               style={styles.input}
               placeholder="family.member@example.com"
@@ -131,7 +131,7 @@ export const ShareCameraScreen: React.FC<Props> = ({ navigation, route }) => {
             {isLoading ? (
               <ActivityIndicator color={COLORS.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Grant Access</Text>
+              <Text style={styles.primaryButtonText}>Share Camera</Text>
             )}
           </TouchableOpacity>
         </View>

@@ -217,7 +217,7 @@ export const CameraListScreen: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.title}>Camera Feeds</Text>
         <Text style={styles.subtitle}>
-          {cameras.length} active surveillance units connected
+          {cameras.length} cameras connected
         </Text>
 
         {/* Search Bar */}
@@ -290,7 +290,7 @@ export const CameraListScreen: React.FC = () => {
               <Text style={styles.emptyStateDesc}>
                 {searchQuery || activeFilter !== 'all'
                   ? 'No camera matches the active filter or search query.'
-                  : 'No CCTV units linked to your account yet.'}
+                  : 'No cameras linked to your account yet.'}
               </Text>
             </View>
           }

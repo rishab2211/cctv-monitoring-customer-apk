@@ -23,6 +23,7 @@ import { useGetCamerasQuery, useRevokeCameraShareMutation } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useAppSelector } from '../../hooks/redux';
+import { isCameraOwner } from '../../utils/cameraUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CameraDetail'>;
 
@@ -48,7 +49,7 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingSubtext}>Loading camera specifications...</Text>
+        <Text style={styles.loadingSubtext}>Loading camera details...</Text>
       </View>
     );
   }
@@ -64,7 +65,7 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     );
   }
 
-  const isOwner = camera.customerId === user?._id || camera.isOwner === true;
+  const isOwner = isCameraOwner(camera, user?._id);
 
   const handleWatchLive = () => {
     if (canStream) {
@@ -155,50 +156,53 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Hardware Health Metrics Card */}
+        {/* Specifications & Connection Details */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Unit Health Metrics</Text>
+          <Text style={styles.cardTitle}>Camera Specifications</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricItem}>
-              <Text style={styles.metricLabel}>CPU LOAD</Text>
-              <Text style={styles.metricValue}>
-                {camera.health?.cpuUsage ? `${camera.health.cpuUsage}%` : '24%'}
+              <Text style={styles.metricLabel}>PROTOCOL</Text>
+              <Text style={styles.metricValue}>WebRTC</Text>
+            </View>
+
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>STATUS</Text>
+              <Text
+                style={[
+                  styles.metricValue,
+                  { color: camera.status === 'online' ? COLORS.successGreen : COLORS.textMuted },
+                ]}
+              >
+                {camera.status?.toUpperCase() || 'ONLINE'}
               </Text>
             </View>
 
             <View style={styles.metricItem}>
-              <Text style={styles.metricLabel}>MEMORY</Text>
-              <Text style={styles.metricValue}>
-                {camera.health?.memoryUsage ? `${camera.health.memoryUsage}%` : '42%'}
-              </Text>
+              <Text style={styles.metricLabel}>LATENCY</Text>
+              <Text style={styles.metricValue}>Sub-sec</Text>
             </View>
 
             <View style={styles.metricItem}>
-              <Text style={styles.metricLabel}>TEMPERATURE</Text>
-              <Text style={[styles.metricValue, { color: COLORS.successGreen }]}>
-                {camera.health?.temperature ? `${camera.health.temperature}°C` : '41°C'}
-              </Text>
-            </View>
-
-            <View style={styles.metricItem}>
-              <Text style={styles.metricLabel}>STORAGE</Text>
-              <Text style={styles.metricValue}>
-                {camera.health?.storageUsage ? `${camera.health.storageUsage}%` : '68%'}
-              </Text>
+              <Text style={styles.metricLabel}>OWNERSHIP</Text>
+              <Text style={styles.metricValue}>{isOwner ? 'Primary' : 'Shared'}</Text>
             </View>
           </View>
         </View>
 
         {/* Security & Recording Features Card */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Surveillance Features</Text>
+          <Text style={styles.cardTitle}>Active Services</Text>
           <View style={styles.featureRow}>
             <Text style={styles.featureName}>24/7 Cloud Recording</Text>
-            <Text style={styles.featureStatusActive}>ACTIVE</Text>
+            <Text style={styles.featureStatusActive}>
+              {camera.settings?.recordingEnabled !== false ? 'ACTIVE' : 'OFF'}
+            </Text>
           </View>
           <View style={styles.featureRow}>
-            <Text style={styles.featureName}>AI Human & Vehicle Detection</Text>
-            <Text style={styles.featureStatusActive}>ACTIVE</Text>
+            <Text style={styles.featureName}>Motion Detection Alerts</Text>
+            <Text style={styles.featureStatusActive}>
+              {camera.settings?.motionDetection !== false ? 'ENABLED' : 'OFF'}
+            </Text>
           </View>
           <View style={styles.featureRow}>
             <Text style={styles.featureName}>Emergency SOS Linking</Text>
