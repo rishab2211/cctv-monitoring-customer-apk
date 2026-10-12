@@ -42,7 +42,7 @@ export const cameraApi = baseApi.injectEndpoints({
 
     getCameraDetail: builder.query<ApiResponse<{ camera: Camera }>, string>({
       query: (cameraId) => ({
-        url: `/customer/cameras/${cameraId}`,
+        url: `/cameras/${cameraId}`,
         method: 'GET',
       }),
       providesTags: (_result, _error, id) => [{ type: 'Cameras', id }],
@@ -63,6 +63,16 @@ export const cameraApi = baseApi.injectEndpoints({
         url: `/streams/${cameraId}/webrtc/offer`,
         method: 'POST',
         data: { sdp, type },
+      }),
+    }),
+
+    heartbeatStream: builder.mutation<
+      ApiResponse<{ sessionId: string; lastHeartbeat: string }>,
+      string
+    >({
+      query: (sessionId) => ({
+        url: `/streams/heartbeat/${sessionId}`,
+        method: 'POST',
       }),
     }),
 
@@ -121,6 +131,7 @@ export const {
   useGetCameraLiveInfoQuery,
   useLazyGetCameraLiveInfoQuery,
   usePostWebRTCOfferMutation,
+  useHeartbeatStreamMutation,
   useStopStreamMutation,
   useGetCameraPlaybackQuery,
   useLazyGetCameraPlaybackQuery,

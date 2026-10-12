@@ -32,6 +32,7 @@ import { HugeIcon } from '../../components/HugeIcon';
 import {
   useGetCameraLiveInfoQuery,
   usePostWebRTCOfferMutation,
+  useHeartbeatStreamMutation,
   useStopStreamMutation,
 } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
@@ -56,6 +57,7 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const sessionIdRef = useRef<string | null>(null);
   sessionIdRef.current = sessionId;
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { canStream, paywallType } = useSubscriptionGuard();
 
@@ -68,6 +70,7 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
   });
 
   const [postOfferMutation] = usePostWebRTCOfferMutation();
+  const [heartbeatMutation] = useHeartbeatStreamMutation();
   const [stopStreamMutation] = useStopStreamMutation();
 
   // 1. Subscription Check Gate
@@ -76,6 +79,15 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
       setPaywallVisible(true);
     }
   }, [canStream]);
+
+  // Synchronize native audio tracks with isMuted state
+  useEffect(() => {
+    if (remoteStream) {
+      remoteStream.getAudioTracks().forEach((track: any) => {
+        track.enabled = !isMuted;
+      });
+    }
+  }, [isMuted, remoteStream]);
 
   // 2. WebRTC Peer Connection Setup & WHEP Handshake
   useEffect(() => {
@@ -86,6 +98,18 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
     if (streamInfo.sessionId) {
       sessionIdRef.current = streamInfo.sessionId;
       setSessionId(streamInfo.sessionId);
+
+      // Start 45s keepalive heartbeat ping to prevent backend stale session reaping (3m timeout)
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+      }
+      heartbeatIntervalRef.current = setInterval(() => {
+        if (sessionIdRef.current) {
+          heartbeatMutation(sessionIdRef.current)
+            .unwrap()
+            .catch(() => null);
+        }
+      }, 45000);
     }
 
     const startWebRTCStream = async () => {
@@ -138,10 +162,14 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
         if (!isMounted) return;
         await pc.setLocalDescription(offer);
 
+        // Ensure clean CRLF RFC-compliant SDP ending for MediaMTX WHEP parser
+        const rawSdp = (pc as any).localDescription?.sdp || offer.sdp || '';
+        const cleanOfferSdp = rawSdp.endsWith('\r\n') ? rawSdp : `${rawSdp.trim()}\r\n`;
+
         // Relay SDP Offer to backend MediaMTX WHEP endpoint
         const answerResponse = await postOfferMutation({
           cameraId,
-          sdp: offer.sdp,
+          sdp: cleanOfferSdp,
           type: 'offer',
         }).unwrap();
 
@@ -168,6 +196,10 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
 
     return () => {
       isMounted = false;
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+        heartbeatIntervalRef.current = null;
+      }
       if (pcRef.current) {
         try {
           pcRef.current.close();
@@ -177,11 +209,15 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
         pcRef.current = null;
       }
     };
-  }, [canStream, liveInfoResponse, cameraId, postOfferMutation]);
+  }, [canStream, liveInfoResponse, cameraId, postOfferMutation, heartbeatMutation]);
 
   // 3. Stop stream session on exit with resilient ref
   useEffect(() => {
     return () => {
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+        heartbeatIntervalRef.current = null;
+      }
       const activeSession = sessionIdRef.current;
       if (activeSession) {
         stopStreamMutation({ cameraId, sessionId: activeSession }).catch(() => {});
