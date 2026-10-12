@@ -163,7 +163,7 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
         </View>
 
         <View style={styles.cardFooter}>
-          <Text style={styles.viewDetailText}>View Full Report & Notes</Text>
+          <Text style={styles.viewDetailText}>View details</Text>
           <HugeIcon icon={ArrowRight01Icon} size={14} color={COLORS.primary} />
         </View>
       </TouchableOpacity>
@@ -178,7 +178,7 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
           <View>
             <Text style={styles.title}>Incident Reports</Text>
             <Text style={styles.subtitle}>
-              Track security events, breaches & filed reports
+              View and manage reports you've submitted
             </Text>
           </View>
           <TouchableOpacity
@@ -217,7 +217,7 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
       {isLoading ? (
         <View style={styles.centerLoading}>
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Loading incident records...</Text>
+          <Text style={styles.loadingText}>Loading incidents...</Text>
         </View>
       ) : (
         <FlatList
@@ -242,9 +242,9 @@ export const IncidentListScreen: React.FC<Props> = ({ navigation, route }) => {
               description={
                 activeFilter !== 'all'
                   ? `No incident reports match the '${activeFilter}' filter.`
-                  : 'Your security premises have zero reported incident breaches.'
+                  : 'You have not reported any incidents.'
               }
-              actionLabel="Report New Incident"
+              actionLabel="Report an Incident"
               onAction={() => navigation.navigate('ReportIncident')}
             />
           }

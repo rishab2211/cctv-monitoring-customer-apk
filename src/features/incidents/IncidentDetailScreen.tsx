@@ -187,14 +187,14 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
             </View>
           </View>
 
-          <Text style={styles.sectionHeader}>Statement & Evidence Details</Text>
+          <Text style={styles.sectionHeader}>Description</Text>
           <Text style={styles.descriptionText}>{incident.description}</Text>
         </View>
 
         {/* Linked CCTV Camera (If associated) */}
         {cameraObj ? (
           <View style={styles.card}>
-            <Text style={styles.cardSectionTitle}>Associated CCTV Camera</Text>
+            <Text style={styles.cardSectionTitle}>Camera Feed</Text>
             <View style={styles.cameraRow}>
               <View style={styles.cameraIconBox}>
                 <HugeIcon icon={CctvCameraIcon} size={22} color={COLORS.primary} />
@@ -210,7 +210,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
                 onPress={() => handleWatchCamera(cameraObj._id, cameraObj.name)}
               >
                 <HugeIcon icon={PlayIcon} size={14} color={COLORS.textInverse} />
-                <Text style={styles.watchLiveText}>Live Stream</Text>
+                <Text style={styles.watchLiveText}>Watch Live</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -220,7 +220,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
         {incident.attachments && incident.attachments.length > 0 ? (
           <View style={styles.card}>
             <Text style={styles.cardSectionTitle}>
-              Media Attachments ({incident.attachments.length})
+              Photos & Videos ({incident.attachments.length})
             </Text>
             <View style={styles.attachmentsGrid}>
               {incident.attachments.map((att: any, idx: number) => (
@@ -238,7 +238,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
         {/* Notes & Follow-up Thread */}
         <View style={styles.card}>
           <Text style={styles.cardSectionTitle}>
-            Investigation Notes ({incident.notes?.length || 0})
+            Updates & Notes ({incident.notes?.length || 0})
           </Text>
 
           {incident.notes && incident.notes.length > 0 ? (
@@ -249,7 +249,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
                   <Text style={styles.noteAuthor}>
                     {typeof note.author === 'object' && note.author !== null
                       ? note.author.name
-                      : 'Authorized Responder'}
+                      : 'Security Team'}
                   </Text>
                   <Text style={styles.noteTime}>
                     {new Date(note.createdAt).toLocaleTimeString([], {
@@ -263,7 +263,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
             ))
           ) : (
             <Text style={styles.emptyNotesText}>
-              No follow-up notes logged for this incident yet.
+              No notes added yet.
             </Text>
           )}
 
@@ -272,7 +272,7 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
             <View style={styles.addNoteBox}>
               <TextInput
                 style={styles.noteInput}
-                placeholder="Add an update or additional observation..."
+                placeholder="Add an update or note..."
                 placeholderTextColor={COLORS.textMuted}
                 value={newNote}
                 onChangeText={setNewNote}
@@ -300,14 +300,14 @@ export const IncidentDetailScreen: React.FC<Props> = ({ navigation, route }) => 
         {/* Audit Timeline */}
         {timeline.length > 0 ? (
           <View style={styles.card}>
-            <Text style={styles.cardSectionTitle}>Incident Status Lifecycle</Text>
+            <Text style={styles.cardSectionTitle}>History</Text>
             {timeline.map((item: any) => (
               <View key={item._id} style={styles.timelineRow}>
                 <View style={styles.timelineDot} />
                 <View style={styles.timelineContent}>
                   <Text style={styles.timelineAction}>{(item.action || 'UPDATE').toUpperCase()}</Text>
                   <Text style={styles.timelineTime}>
-                    {new Date(item.timestamp || Date.now()).toLocaleString()} • {item.performedBy?.name || 'System'}
+                    {new Date(item.timestamp || Date.now()).toLocaleString()} • {item.performedBy?.name || 'Security Team'}
                   </Text>
                   {item.notes ? <Text style={styles.timelineNotes}>{item.notes}</Text> : null}
                 </View>

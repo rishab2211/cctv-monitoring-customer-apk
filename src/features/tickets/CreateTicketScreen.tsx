@@ -33,8 +33,8 @@ const createTicketSchema = z.object({
     .string()
     .min(10, 'Description must be at least 10 characters')
     .max(1000, 'Description must be less than 1000 characters'),
-  category: z.enum(['technical', 'billing', 'general', 'other']),
-  priority: z.enum(['low', 'medium', 'high', 'critical']),
+  category: z.enum(['technical', 'billing', 'account', 'general']),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']),
 });
 
 type CreateTicketFormValues = z.infer<typeof createTicketSchema>;
@@ -101,9 +101,9 @@ export const CreateTicketScreen: React.FC<Props> = ({ navigation }) => {
 
   const categories: Array<{ key: CreateTicketFormValues['category']; label: string }> = [
     { key: 'technical', label: 'Technical / Feed Issue' },
-    { key: 'billing', label: 'Billing & Plans' },
-    { key: 'general', label: 'Installation & Hardware' },
-    { key: 'other', label: 'Other Inquiries' },
+    { key: 'billing', label: 'Billing & Payments' },
+    { key: 'account', label: 'Account & Access' },
+    { key: 'general', label: 'General / Hardware' },
   ];
 
   const priorities: Array<{
@@ -114,7 +114,7 @@ export const CreateTicketScreen: React.FC<Props> = ({ navigation }) => {
     { key: 'low', label: 'Low', color: COLORS.textMuted },
     { key: 'medium', label: 'Medium', color: COLORS.infoBlue },
     { key: 'high', label: 'High', color: COLORS.warningAmber },
-    { key: 'critical', label: 'Critical', color: COLORS.sosRed },
+    { key: 'urgent', label: 'Urgent', color: COLORS.sosRed },
   ];
 
   return (

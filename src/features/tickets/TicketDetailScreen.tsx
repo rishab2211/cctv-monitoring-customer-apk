@@ -61,7 +61,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingSubtext}>Loading ticket conversation...</Text>
+        <Text style={styles.loadingSubtext}>Loading ticket...</Text>
       </View>
     );
   }
@@ -69,7 +69,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   if (!ticket) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Support ticket not found or access expired.</Text>
+        <Text style={styles.errorText}>Ticket not found.</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -147,7 +147,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
           </View>
 
-          <Text style={styles.sectionHeader}>Initial Problem Description</Text>
+          <Text style={styles.sectionHeader}>Description</Text>
           <Text style={styles.descriptionText}>{ticket.description}</Text>
           <Text style={styles.ticketDate}>Opened on {formattedDate}</Text>
         </View>
@@ -157,14 +157,14 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.closedNotice}>
             <HugeIcon icon={AlertCircleIcon} size={16} color={COLORS.warningAmber} />
             <Text style={styles.closedNoticeText}>
-              This ticket is marked as {ticket.status}. Sending a reply will automatically reopen the thread for support.
+              This ticket is {ticket.status}. Replying will reopen it.
             </Text>
           </View>
         ) : null}
 
         {/* Conversation Thread */}
         <View style={styles.threadContainer}>
-          <Text style={styles.threadSectionTitle}>Discussion & Updates</Text>
+          <Text style={styles.threadSectionTitle}>Discussion</Text>
 
           {comments.length > 0 ? (
             comments.map((comment: any) => {
@@ -178,7 +178,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
                   ? comment.sender.name
                   : isMine
                   ? 'You'
-                  : 'Support Engineer';
+                  : 'Support';
 
               const commentTime = new Date(comment.createdAt).toLocaleTimeString([], {
                 hour: '2-digit',
@@ -222,7 +222,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           ) : (
             <View style={styles.emptyThreadBox}>
               <Text style={styles.emptyThreadText}>
-                No messages yet. Our support engineers will respond shortly.
+                No messages yet. We'll reply soon.
               </Text>
             </View>
           )}
@@ -233,7 +233,7 @@ export const TicketDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       <View style={styles.composerContainer}>
         <TextInput
           style={styles.composerInput}
-          placeholder="Type your response or update..."
+          placeholder="Write a reply..."
           placeholderTextColor={COLORS.textMuted}
           value={commentText}
           onChangeText={setCommentText}

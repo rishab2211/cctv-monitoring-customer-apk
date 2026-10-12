@@ -86,11 +86,11 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
       const incidentId = createdIncident._id || (response as any)._id;
 
       Alert.alert(
-        'Incident Reported',
-        `Incident #${(incidentId || '').slice(-6).toUpperCase()} has been submitted. Our security team will review it immediately.`,
+        'Report Submitted',
+        `Incident #${(incidentId || '').slice(-6).toUpperCase()} has been submitted. Our security team will review it.`,
         [
           {
-            text: 'View Incident',
+            text: 'View Details',
             onPress: () => {
               navigation.replace('IncidentDetail', {
                 incidentId,
@@ -103,16 +103,16 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
     } catch (err: any) {
       console.error('[ReportIncident] Error:', err);
       setErrorMessage(
-        err.data?.message || err.message || 'Failed to submit incident report. Please try again.'
+        err.data?.message || err.message || 'Failed to submit report. Please try again.'
       );
     }
   };
 
   const incidentTypes: Array<{ key: ReportIncidentFormValues['type']; label: string }> = [
-    { key: 'theft', label: 'Theft / Burglary' },
+    { key: 'theft', label: 'Theft' },
     { key: 'vandalism', label: 'Property Damage' },
-    { key: 'technical_issue', label: 'Camera / Hardware' },
-    { key: 'other', label: 'General Threat' },
+    { key: 'technical_issue', label: 'Camera Problem' },
+    { key: 'other', label: 'Other Issue' },
   ];
 
   const severityLevels: Array<{
@@ -123,7 +123,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
     { key: 'low', label: 'Low', color: COLORS.textMuted },
     { key: 'medium', label: 'Medium', color: COLORS.infoBlue },
     { key: 'high', label: 'High', color: COLORS.warningAmber },
-    { key: 'critical', label: 'Critical', color: COLORS.sosRed },
+    { key: 'critical', label: 'Urgent', color: COLORS.sosRed },
   ];
 
   return (
@@ -135,7 +135,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
         <View style={styles.header}>
           <Text style={styles.title}>Report an Incident</Text>
           <Text style={styles.subtitle}>
-            Submit a security breach or incident report for review by your franchise & monitoring operators
+            Tell our security team what happened so we can review it right away.
           </Text>
         </View>
 
@@ -149,14 +149,14 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
         <View style={styles.formCard}>
           {/* Incident Title */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Incident Subject / Summary</Text>
+            <Text style={styles.inputLabel}>What happened?</Text>
             <Controller
               control={control}
               name="title"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={[styles.input, errors.title && styles.inputError]}
-                  placeholder="e.g. Suspicious activity near front gate"
+                  placeholder="e.g. Person trespassing by back gate"
                   placeholderTextColor={COLORS.textMuted}
                   value={value}
                   onChangeText={onChange}
@@ -172,7 +172,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
 
           {/* Incident Type Selector */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Incident Classification</Text>
+            <Text style={styles.inputLabel}>Type of incident</Text>
             <View style={styles.chipsGrid}>
               {incidentTypes.map((type) => (
                 <TouchableOpacity
@@ -198,7 +198,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
 
           {/* Severity Selector */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Severity Level</Text>
+            <Text style={styles.inputLabel}>Urgency</Text>
             <View style={styles.chipsRow}>
               {severityLevels.map((sev) => (
                 <TouchableOpacity
@@ -229,7 +229,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
           {/* CCTV Camera Linking */}
           {cameras.length > 0 ? (
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Link CCTV Camera (Optional)</Text>
+              <Text style={styles.inputLabel}>Related Camera (Optional)</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -248,7 +248,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
                       !selectedCameraId && styles.cameraChipTextActive,
                     ]}
                   >
-                    No Specific Camera
+                    None
                   </Text>
                 </TouchableOpacity>
 
@@ -287,7 +287,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
 
           {/* Description */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Detailed Description of Event</Text>
+            <Text style={styles.inputLabel}>Details</Text>
             <Controller
               control={control}
               name="description"
@@ -298,7 +298,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
                     styles.textArea,
                     errors.description && styles.inputError,
                   ]}
-                  placeholder="Provide precise details, estimated time of occurrence, and any identifiable suspects or damages..."
+                  placeholder="Describe what occurred, approximately when it happened, and any other helpful details..."
                   placeholderTextColor={COLORS.textMuted}
                   value={value}
                   onChangeText={onChange}
@@ -327,7 +327,7 @@ export const ReportIncidentScreen: React.FC<Props> = ({ navigation, route }) => 
             {isLoading ? (
               <ActivityIndicator color={COLORS.textInverse} />
             ) : (
-              <Text style={styles.submitButtonText}>Submit Incident Report</Text>
+              <Text style={styles.submitButtonText}>Submit Report</Text>
             )}
           </TouchableOpacity>
         </View>

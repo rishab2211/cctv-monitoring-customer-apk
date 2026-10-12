@@ -22,8 +22,8 @@ export interface TicketDetailResponse {
 export interface CreateTicketRequest {
   title: string;
   description: string;
-  category: 'technical' | 'billing' | 'general' | 'other';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: 'technical' | 'billing' | 'account' | 'general';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
 export interface AddTicketCommentRequest {

@@ -159,7 +159,7 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <View style={styles.cardFooter}>
-          <Text style={styles.viewDetailText}>Open Support Thread</Text>
+          <Text style={styles.viewDetailText}>View ticket</Text>
           <HugeIcon icon={ArrowRight01Icon} size={14} color={COLORS.primary} />
         </View>
       </TouchableOpacity>
@@ -172,7 +172,7 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.title}>Support Tickets</Text>
-            <Text style={styles.subtitle}>Direct technical assistance from your franchise</Text>
+            <Text style={styles.subtitle}>Get help with cameras, billing, and your account</Text>
           </View>
           <TouchableOpacity
             style={styles.createBtn}
@@ -211,7 +211,7 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
       {isLoading ? (
         <View style={styles.centerLoading}>
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Loading support tickets...</Text>
+          <Text style={styles.loadingText}>Loading tickets...</Text>
         </View>
       ) : (
         <FlatList
@@ -233,8 +233,8 @@ export const TicketListScreen: React.FC<Props> = ({ navigation }) => {
             <EmptyState
               icon={CustomerSupportIcon}
               title="No Support Tickets"
-              description="Need help with camera feeds, billing, or installation? Open a ticket."
-              actionLabel="Create Support Ticket"
+              description="Need help with cameras, billing, or installation? Open a ticket."
+              actionLabel="Open a Ticket"
               onAction={() => navigation.navigate('CreateTicket')}
             />
           }
