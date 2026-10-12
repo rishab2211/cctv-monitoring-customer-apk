@@ -10,7 +10,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import authReducer, { logout } from './slices/authSlice';
+import authReducer, { logout, setToken } from './slices/authSlice';
 import uiReducer, { setRateLimitCountdown } from './slices/uiSlice';
 import { baseApi } from '../api/rtk-query/baseApi';
 import { setAuthCallbacks } from '../api/axiosInstance';
@@ -55,6 +55,9 @@ setAuthCallbacks(
   },
   (seconds: number) => {
     store.dispatch(setRateLimitCountdown(seconds));
+  },
+  (token: string, refreshToken?: string) => {
+    store.dispatch(setToken({ token, refreshToken }));
   }
 );
 

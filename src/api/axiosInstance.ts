@@ -58,14 +58,19 @@ axiosInstance.interceptors.request.use(
 // External store injection to avoid circular dependency
 let onLogoutCallback: (() => void) | null = null;
 let onRateLimitCallback: ((seconds: number) => void) | null = null;
+let onTokenRefreshedCallback: ((accessToken: string, refreshToken?: string) => void) | null = null;
 
 export const setAuthCallbacks = (
   onLogout: () => void,
-  onRateLimit?: (seconds: number) => void
+  onRateLimit?: (seconds: number) => void,
+  onTokenRefreshed?: (accessToken: string, refreshToken?: string) => void
 ) => {
   onLogoutCallback = onLogout;
   if (onRateLimit) {
     onRateLimitCallback = onRateLimit;
+  }
+  if (onTokenRefreshed) {
+    onTokenRefreshedCallback = onTokenRefreshed;
   }
 };
 
@@ -141,6 +146,11 @@ axiosInstance.interceptors.response.use(
 
         // Update Keychain
         await saveTokens(newAccessToken, newRefreshToken);
+
+        // Synchronize in-memory Redux store so socket listeners use the refreshed token
+        if (onTokenRefreshedCallback) {
+          onTokenRefreshedCallback(newAccessToken, newRefreshToken);
+        }
 
         // Update original request with new token
         setAuthHeader(originalRequest, newAccessToken);
