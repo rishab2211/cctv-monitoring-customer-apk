@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "emulator:gpu": "QT_QPA_PLATFORM=xcb __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia emulator -avd Pixel_7a -gpu host -memory 4096 -cores 4",
+    "build:apk": "cd android && ./gradlew assembleRelease",
+    "build:apk:debug": "cd android && ./gradlew assembleDebug",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
