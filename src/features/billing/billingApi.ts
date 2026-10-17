@@ -168,6 +168,22 @@ export const billingApi = baseApi.injectEndpoints({
       invalidatesTags: ['Billing'],
     }),
 
+    // 3b. Self-service subscribe to plan
+    subscribeToPlan: builder.mutation<
+      { success: boolean; data: { subscription: Subscription; invoice: any } },
+      { planName: string; durationMonths?: number }
+    >({
+      query: (data) => ({
+        url: '/customer/subscribe',
+        method: 'POST',
+        data: {
+          planName: data.planName,
+          durationMonths: data.durationMonths || 1,
+        },
+      }),
+      invalidatesTags: ['Billing', 'Dashboard'],
+    }),
+
     // 4. Cancel active subscription (auto-resolves active subscription)
     cancelSubscription: builder.mutation<{ success: boolean; message: string }, void>({
       query: () => ({
@@ -292,6 +308,7 @@ export const {
   useGetPlansQuery,
   useGetCustomerSubscriptionQuery,
   useCreateSubscriptionMutation,
+  useSubscribeToPlanMutation,
   useCancelSubscriptionMutation,
   useRenewSubscriptionMutation,
   useCreatePaymentOrderMutation,
