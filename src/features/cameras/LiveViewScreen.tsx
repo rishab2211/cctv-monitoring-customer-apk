@@ -38,6 +38,7 @@ import {
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { joinCameraRoom, leaveCameraRoom } from '../../hooks/useSocket';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LiveView'>;
 
@@ -72,6 +73,16 @@ export const LiveViewScreen: React.FC<Props> = ({ route, navigation }) => {
   const [postOfferMutation] = usePostWebRTCOfferMutation();
   const [heartbeatMutation] = useHeartbeatStreamMutation();
   const [stopStreamMutation] = useStopStreamMutation();
+
+  // Join camera room on socket to receive real-time camera events
+  useEffect(() => {
+    if (cameraId) {
+      joinCameraRoom(cameraId);
+      return () => {
+        leaveCameraRoom(cameraId);
+      };
+    }
+  }, [cameraId]);
 
   // 1. Subscription Check Gate
   useEffect(() => {

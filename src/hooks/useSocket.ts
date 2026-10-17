@@ -14,8 +14,25 @@ const devLog = (...args: any[]) => {
 };
 
 let socketInstance: Socket | null = null;
+const joinedCameraIds = new Set<string>();
 
 export const getSocket = (): Socket | null => socketInstance;
+
+export const joinCameraRoom = (cameraId: string) => {
+  if (!cameraId) return;
+  joinedCameraIds.add(cameraId);
+  if (socketInstance?.connected) {
+    socketInstance.emit('join_camera', cameraId);
+  }
+};
+
+export const leaveCameraRoom = (cameraId: string) => {
+  if (!cameraId) return;
+  joinedCameraIds.delete(cameraId);
+  if (socketInstance?.connected) {
+    socketInstance.emit('leave_camera', cameraId);
+  }
+};
 
 export const useSocket = () => {
   const dispatch = useAppDispatch();
@@ -30,6 +47,7 @@ export const useSocket = () => {
         socketInstance.disconnect();
         socketInstance = null;
       }
+      joinedCameraIds.clear();
       return;
     }
 
@@ -54,6 +72,10 @@ export const useSocket = () => {
 
     socket.on('connect', () => {
       devLog('[Socket.IO] Connected with id:', socket.id);
+      // Re-subscribe to any active cameras on reconnect
+      joinedCameraIds.forEach((camId) => {
+        socket.emit('join_camera', camId);
+      });
     });
 
     socket.on('connect_error', (err) => {
