@@ -11,7 +11,11 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import { isCameraOwner } from '../../utils/cameraUtils';
+import {
+  isCameraOwner,
+  formatCameraLocation,
+  formatCameraPing,
+} from '../../utils/cameraUtils';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
@@ -55,14 +59,18 @@ export const CameraListScreen: React.FC = () => {
 
   const filteredCameras = useMemo(() => {
     return cameras.filter((cam) => {
-      const isOwner = cam.customerId === user?._id || cam.isOwner === true;
+      const isOwner = isCameraOwner(cam, user?._id);
+      const locText = formatCameraLocation(cam).toLowerCase();
+      const q = searchQuery.trim().toLowerCase();
 
       // 1. Search Query Match
       const matchesSearch =
-        searchQuery.trim() === '' ||
-        cam.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cam.serialNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cam.location?.address?.toLowerCase().includes(searchQuery.toLowerCase());
+        q === '' ||
+        cam.name.toLowerCase().includes(q) ||
+        (cam.serialNumber && cam.serialNumber.toLowerCase().includes(q)) ||
+        (cam.customerName && cam.customerName.toLowerCase().includes(q)) ||
+        (cam.franchiseName && cam.franchiseName.toLowerCase().includes(q)) ||
+        locText.includes(q);
 
       if (!matchesSearch) return false;
 
@@ -125,6 +133,8 @@ export const CameraListScreen: React.FC = () => {
   const renderCameraCard = useCallback(
     ({ item: camera }: { item: Camera }) => {
       const isOwner = isCameraOwner(camera, user?._id);
+      const locationText = formatCameraLocation(camera);
+      const pingInfo = formatCameraPing(camera);
 
       return (
         <View style={styles.card}>
@@ -143,7 +153,15 @@ export const CameraListScreen: React.FC = () => {
               <View style={styles.locationRow}>
                 <HugeIcon icon={Location01Icon} size={12} color={COLORS.textMuted} />
                 <Text style={styles.cameraLocation} numberOfLines={1}>
-                  {camera.location?.address || 'Premises Camera'}
+                  {locationText}
+                </Text>
+              </View>
+              <View style={styles.pingRow}>
+                {pingInfo.isOnline && pingInfo.isRecent ? (
+                  <View style={styles.onlinePulseDot} />
+                ) : null}
+                <Text style={styles.pingText}>
+                  {pingInfo.isOnline ? `Active • ${pingInfo.text}` : `Offline • Last seen ${pingInfo.text}`}
                 </Text>
               </View>
             </View>
@@ -433,6 +451,23 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.bodySmall,
     color: COLORS.textMuted,
     marginLeft: 4,
+  },
+  pingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  onlinePulseDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.successGreen,
+    marginRight: 5,
+  },
+  pingText: {
+    fontSize: 11,
+    color: COLORS.textMuted,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   previewBox: {
     height: 150,

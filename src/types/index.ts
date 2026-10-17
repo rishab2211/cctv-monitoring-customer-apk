@@ -55,17 +55,56 @@ export interface Subscription {
   autoRenew: boolean;
 }
 
+export interface CameraLocation {
+  street?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 export interface Camera {
   _id: string;
   name: string;
   serialNumber: string;
-  location: {
-    address?: string;
-    latitude?: number;
-    longitude?: number;
-  };
+  rtspUrl?: string;
+  location?: CameraLocation | string;
   status: 'online' | 'offline' | 'maintenance';
-  customerId: string | { _id: string; [key: string]: any };
+  customerId: string | {
+    _id: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      pincode?: string;
+    };
+    [key: string]: any;
+  };
+  customerName?: string;
+  franchiseName?: string;
+  franchiseId?: string | {
+    _id: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    territory?: {
+      city?: string;
+      state?: string;
+      zone?: string;
+    };
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      pincode?: string;
+    };
+  };
+  operatorIds?: (string | { _id: string; name?: string; email?: string; phone?: string })[];
   isOwner?: boolean;
   sharedWith?: Array<{
     userId: string;
@@ -79,11 +118,18 @@ export interface Camera {
     storageUsage?: number;
     lastPing?: string;
   };
+  lastPing?: string;
   settings?: {
     recordingEnabled?: boolean;
     motionDetection?: boolean;
+    motionDetectionEnabled?: boolean;
     aiEnabled?: boolean;
+    aiFeaturesEnabled?: boolean;
+    recordingRetentionDays?: number;
+    talkbackEnabled?: boolean;
   };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SOSAlert {
@@ -98,6 +144,8 @@ export interface SOSAlert {
         address?: string;
       };
   status: 'active' | 'acknowledged' | 'resolved' | 'false_alarm';
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  notes?: string;
   acknowledgedBy?: string | User;
   acknowledgedAt?: string;
   resolvedBy?: string | User;

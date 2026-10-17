@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
-import { isCameraOwner } from '../../utils/cameraUtils';
+import { isCameraOwner, formatCameraLocation } from '../../utils/cameraUtils';
 import {
   SirenIcon,
   ArrowRight01Icon,
@@ -251,7 +251,7 @@ export const DashboardScreen: React.FC = () => {
                         {camera.name}
                       </Text>
                       <Text style={styles.cameraFeedLocation} numberOfLines={1}>
-                        {camera.location?.address || 'Premises'}
+                        {formatCameraLocation(camera, 'Premises')}
                       </Text>
                     </View>
                     <StatusBadge status={camera.status} size="small" />

@@ -19,11 +19,19 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../../components/HugeIcon';
 import { StatusBadge } from '../../components/StatusBadge';
-import { useGetCamerasQuery, useRevokeCameraShareMutation } from './cameraApi';
+import {
+  useGetCamerasQuery,
+  useGetCameraDetailQuery,
+  useRevokeCameraShareMutation,
+} from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useAppSelector } from '../../hooks/redux';
-import { isCameraOwner } from '../../utils/cameraUtils';
+import {
+  isCameraOwner,
+  formatCameraLocation,
+  formatCameraPing,
+} from '../../utils/cameraUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CameraDetail'>;
 
@@ -34,18 +42,24 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const [paywallVisible, setPaywallVisible] = useState(false);
 
+  const { data: cameraDetailResponse, isLoading: isLoadingDetail } = useGetCameraDetailQuery(
+    cameraId,
+    { skip: !cameraId }
+  );
+
   const { data: camerasResponse, isLoading: isLoadingCameras } = useGetCamerasQuery(undefined, {
-    skip: !!passedCamera,
+    skip: !!passedCamera || !!cameraDetailResponse?.data?.camera,
   });
 
   const camera =
+    cameraDetailResponse?.data?.camera ||
     passedCamera ||
     camerasResponse?.data?.cameras?.find((c) => c._id === cameraId);
 
   const [revokeShareMutation, { isLoading: isRevoking }] = useRevokeCameraShareMutation();
   const { canStream, paywallType } = useSubscriptionGuard();
 
-  if (isLoadingCameras) {
+  if (isLoadingCameras || (isLoadingDetail && !passedCamera)) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
@@ -66,6 +80,8 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   }
 
   const isOwner = isCameraOwner(camera, user?._id);
+  const locationText = formatCameraLocation(camera);
+  const pingInfo = formatCameraPing(camera);
 
   const handleWatchLive = () => {
     if (canStream) {
@@ -132,7 +148,7 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               <Text style={styles.locationLabel}>Location Address</Text>
             </View>
             <Text style={styles.locationValue}>
-              {camera.location?.address || 'Main Entrance / Premises'}
+              {locationText}
             </Text>
           </View>
         </View>
@@ -178,8 +194,8 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
 
             <View style={styles.metricItem}>
-              <Text style={styles.metricLabel}>LATENCY</Text>
-              <Text style={styles.metricValue}>Sub-sec</Text>
+              <Text style={styles.metricLabel}>LAST PING</Text>
+              <Text style={styles.metricValue}>{pingInfo.text}</Text>
             </View>
 
             <View style={styles.metricItem}>
@@ -187,6 +203,23 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               <Text style={styles.metricValue}>{isOwner ? 'Primary' : 'Shared'}</Text>
             </View>
           </View>
+
+          {camera.customerName || camera.franchiseName ? (
+            <View style={[styles.metricsGrid, { marginTop: SPACING.md, borderTopWidth: 1, borderTopColor: COLORS.border, paddingTop: SPACING.md }]}>
+              {camera.customerName ? (
+                <View style={styles.metricItem}>
+                  <Text style={styles.metricLabel}>ASSIGNED TO</Text>
+                  <Text style={styles.metricValue} numberOfLines={1}>{camera.customerName}</Text>
+                </View>
+              ) : null}
+              {camera.franchiseName ? (
+                <View style={styles.metricItem}>
+                  <Text style={styles.metricLabel}>FRANCHISE</Text>
+                  <Text style={styles.metricValue} numberOfLines={1}>{camera.franchiseName}</Text>
+                </View>
+              ) : null}
+            </View>
+          ) : null}
         </View>
 
         {/* Security & Recording Features Card */}
@@ -196,6 +229,12 @@ export const CameraDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <Text style={styles.featureName}>24/7 Cloud Recording</Text>
             <Text style={styles.featureStatusActive}>
               {camera.settings?.recordingEnabled !== false ? 'ACTIVE' : 'OFF'}
+            </Text>
+          </View>
+          <View style={styles.featureRow}>
+            <Text style={styles.featureName}>Recording Retention</Text>
+            <Text style={styles.featureStatusActive}>
+              {camera.settings?.recordingRetentionDays ? `${camera.settings.recordingRetentionDays} DAYS` : '30 DAYS'}
             </Text>
           </View>
           <View style={styles.featureRow}>
