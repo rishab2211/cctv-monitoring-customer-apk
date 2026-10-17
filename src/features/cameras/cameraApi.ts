@@ -18,10 +18,18 @@ export interface WebRTCAnswerResponse {
 
 export interface PlaybackChunk {
   _id: string;
+  recordingId?: string;
+  cameraId?: string;
+  cameraName?: string;
   startTime: string;
   endTime: string;
   url: string;
+  playbackUrl?: string;
+  s3Key?: string;
+  localPath?: string;
   durationSeconds?: number;
+  sizeBytes?: number;
+  type?: string;
   thumbnailUrl?: string;
 }
 
@@ -40,7 +48,7 @@ export const cameraApi = baseApi.injectEndpoints({
       providesTags: ['Cameras'],
     }),
 
-    getCameraDetail: builder.query<ApiResponse<{ camera: Camera }>, string>({
+    getCameraDetail: builder.query<ApiResponse<{ camera: Camera; streamEndpoints?: any }>, string>({
       query: (cameraId) => ({
         url: `/cameras/${cameraId}`,
         method: 'GET',
@@ -94,7 +102,30 @@ export const cameraApi = baseApi.injectEndpoints({
       query: ({ cameraId, startTime, endTime }) => ({
         url: `/customer/cameras/${cameraId}/playback`,
         method: 'GET',
-        params: { startTime, endTime },
+        params: { startTime, endTime, start: startTime, end: endTime },
+      }),
+      providesTags: (_result, _error, { cameraId }) => [{ type: 'Cameras', id: `playback-${cameraId}` }],
+    }),
+
+    getTimeline: builder.query<
+      ApiResponse<PlaybackChunk[]>,
+      { cameraId: string; date: string }
+    >({
+      query: ({ cameraId, date }) => ({
+        url: `/recordings/${cameraId}/timeline`,
+        method: 'GET',
+        params: { date },
+      }),
+      providesTags: (_result, _error, { cameraId }) => [{ type: 'Cameras', id: `timeline-${cameraId}` }],
+    }),
+
+    downloadRecording: builder.mutation<
+      ApiResponse<{ downloadUrl: string }>,
+      { recordingId: string }
+    >({
+      query: ({ recordingId }) => ({
+        url: `/recordings/${recordingId}/download`,
+        method: 'POST',
       }),
     }),
 
@@ -135,6 +166,9 @@ export const {
   useStopStreamMutation,
   useGetCameraPlaybackQuery,
   useLazyGetCameraPlaybackQuery,
+  useGetTimelineQuery,
+  useLazyGetTimelineQuery,
+  useDownloadRecordingMutation,
   useShareCameraMutation,
   useRevokeCameraShareMutation,
 } = cameraApi;

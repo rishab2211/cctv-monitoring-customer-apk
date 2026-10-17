@@ -27,12 +27,14 @@ import { HugeIcon } from '../../components/HugeIcon';
 import {
   useGetCameraPlaybackQuery,
   useGetCameraDetailQuery,
+  useDownloadRecordingMutation,
   PlaybackChunk,
 } from './cameraApi';
 import { useSubscriptionGuard } from '../../hooks/useSubscriptionGuard';
 import { SubscriptionPaywallModal } from '../../components/SubscriptionPaywallModal';
 import { useAppSelector } from '../../hooks/redux';
 import { isCameraOwner } from '../../utils/cameraUtils';
+import { getMediaUrl } from '../../utils/mediaUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecordingPlayback'>;
 
@@ -59,6 +61,8 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
 
   const videoRef = useRef<VideoRef>(null);
   const { canStream, paywallType } = useSubscriptionGuard();
+
+  const [downloadRecordingMutation, { isLoading: isDownloading }] = useDownloadRecordingMutation();
 
   // Query window based on selected day offset
   const { startTime, endTime } = useMemo(() => {
@@ -93,18 +97,32 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
   );
 
   const chunks = playbackResponse?.data?.chunks || [];
-  const activeVideoUrl = selectedChunk?.url || chunks[0]?.url;
+  const rawActiveUrl = selectedChunk?.playbackUrl || selectedChunk?.url || chunks[0]?.playbackUrl || chunks[0]?.url;
+  const activeVideoUrl = useMemo(() => getMediaUrl(rawActiveUrl, true), [rawActiveUrl]);
 
   const handleDownload = async (chunk: PlaybackChunk) => {
-    if (chunk.url) {
-      try {
-        const canOpen = await Linking.canOpenURL(chunk.url);
+    try {
+      const res = await downloadRecordingMutation({ recordingId: chunk._id }).unwrap();
+      const rawDlUrl = res?.data?.downloadUrl || chunk.playbackUrl || chunk.url;
+      const dlUrl = getMediaUrl(rawDlUrl, true);
+      if (dlUrl) {
+        const canOpen = await Linking.canOpenURL(dlUrl);
         if (canOpen) {
-          await Linking.openURL(chunk.url);
+          await Linking.openURL(dlUrl);
           return;
         }
-      } catch (err) {
-        console.warn('[Playback] Error opening download URL:', err);
+      }
+    } catch (err) {
+      console.warn('[Playback] Error obtaining signed download URL:', err);
+      const fallbackUrl = getMediaUrl(chunk.playbackUrl || chunk.url, true);
+      if (fallbackUrl) {
+        try {
+          const canOpen = await Linking.canOpenURL(fallbackUrl);
+          if (canOpen) {
+            await Linking.openURL(fallbackUrl);
+            return;
+          }
+        } catch {}
       }
     }
     Alert.alert(
@@ -262,7 +280,9 @@ export const RecordingPlaybackScreen: React.FC<Props> = ({ navigation, route }) 
                     {startStr} – {endStr}
                   </Text>
                   <Text style={styles.chunkDuration}>
-                    Duration: {Math.round((chunk.durationSeconds || 900) / 60)} mins • Cloud HD
+                    Duration: {Math.round((chunk.durationSeconds || 900) / 60)} mins
+                    {chunk.sizeBytes ? ` • ${(chunk.sizeBytes / (1024 * 1024)).toFixed(1)} MB` : ' • Cloud HD'}
+                    {chunk.type ? ` • ${chunk.type.toUpperCase()}` : ''}
                   </Text>
                 </View>
 
